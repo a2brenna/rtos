@@ -63,13 +63,13 @@ int main(){
 
     const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
     for(const auto &d: test_data){
-        es.write(d.first, d.second);
+        es.store(d.first, d.second);
     }
     const std::chrono::high_resolution_clock::time_point insert_end = std::chrono::high_resolution_clock::now();
 
     const std::chrono::high_resolution_clock::time_point retrieve_start = std::chrono::high_resolution_clock::now();
     for(const auto &d: test_data){
-        volatile const auto foo = es.read(d.first).data();
+        volatile const auto foo = es.fetch(d.first).data();
     }
     const std::chrono::high_resolution_clock::time_point retrieve_end = std::chrono::high_resolution_clock::now();
 

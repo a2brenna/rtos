@@ -8,8 +8,9 @@
 class Ephemeral_Store : public Object_Store {
 
     public:
-        void write(const Id &id, const Data &data);
-        Data read(const Id &id) const;
+        void store(const Id &id, const Data &data);
+        void append(const Id &id, const Data &data);
+        Data fetch(const Id &id) const;
 
     private:
         std::map<Id, Data> _store;
