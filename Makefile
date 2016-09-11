@@ -3,7 +3,7 @@ LIBRARY_DIR=$(shell echo ~)/local/lib
 DESDTIR=/
 PREFIX=/usr
 
-CXX=clang++
+CXX=g++
 CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
 all: test
