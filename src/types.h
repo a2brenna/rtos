@@ -4,7 +4,7 @@
 #include <string>
 
 //typedef std::string Id;
-typedef std::string Data;
+//typedef std::string Data;
 
 class Id {
 
@@ -24,12 +24,14 @@ class Id {
 
 bool operator<(const Id &lhs, const Id &rhs);
 
-/*
 class Data {
 
     public:
 
         Data(const std::string &data);
+        Data();
+
+        void append(const Data &data);
 
         std::string data() const;
 
@@ -38,6 +40,5 @@ class Data {
         std::string _data;
 
 };
-*/
 
 #endif
