@@ -21,7 +21,7 @@ static const char alphanum[] =
 std::string gen_random_hex(const size_t &len) {
 	std::string s;
 
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         const char c = hex[rand() % (sizeof(alphanum) - 1)];
         s.append(1, c);
     }
@@ -32,7 +32,7 @@ std::string gen_random_hex(const size_t &len) {
 std::string gen_random_alphanum(const size_t &len) {
 	std::string s;
 
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         const char c = alphanum[rand() % (sizeof(alphanum) - 1)];
         s.append(1, c);
     }
