@@ -7,6 +7,8 @@
 #include <boost/program_options.hpp>
 #include <cassert>
 
+namespace po = boost::program_options;
+
 static const char hex[] =
     "0123456789"
     "abcdef";
@@ -38,10 +40,20 @@ std::string gen_random_alphanum(const size_t &len) {
 	return s;
 }
 
-int main(){
+size_t NUM_TEST_OBJECTS = 1024 * 1024;
+size_t OBJECT_MAX_SIZE = 64;
 
-    size_t NUM_TEST_OBJECTS = 1024 * 1024;
-    size_t OBJECT_MAX_SIZE = 64;
+int main(int argc, char* argv[]){
+
+	po::options_description desc("Options");
+	desc.add_options()
+		("num_test_objects", po::value<size_t>(&NUM_TEST_OBJECTS), "Number of test objects to store and retrieve")
+		("object_max_size", po::value<size_t>(&OBJECT_MAX_SIZE), "Maximum size of test objects")
+		;
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
 
     const size_t projected_storage = NUM_TEST_OBJECTS * (OBJECT_MAX_SIZE / 2);
     const size_t max_storage = 17179869184;

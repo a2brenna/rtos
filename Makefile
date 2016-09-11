@@ -9,7 +9,7 @@ CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra
 all: test
 
 test: src/test.cc ephemeral_store.o types.o
-	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o types.o -lstdc++
+	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o types.o -lboost_program_options
 
 ephemeral_store.o: src/ephemeral_store.h src/ephemeral_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o ephemeral_store.o -c src/ephemeral_store.cc
