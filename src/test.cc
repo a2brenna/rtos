@@ -1,4 +1,5 @@
 #include "ephemeral_store.h"
+#include "lmdb_store.h"
 
 #include <iostream>
 #include <vector>
@@ -40,7 +41,7 @@ std::string gen_random_alphanum(const size_t &len) {
 	return s;
 }
 
-size_t NUM_TEST_OBJECTS = 1024 * 1024;
+size_t NUM_TEST_OBJECTS = 1024;
 size_t OBJECT_MAX_SIZE = 64;
 
 int main(int argc, char* argv[]){
@@ -71,22 +72,43 @@ int main(int argc, char* argv[]){
 
     /* Test and time */
 
-    Ephemeral_Store es;
+    {
+        Ephemeral_Store es;
 
-    const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
-    for(const auto &d: test_data){
-        es.store(d.first, d.second);
+        const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
+        for(const auto &d: test_data){
+            es.store(d.first, d.second);
+        }
+        const std::chrono::high_resolution_clock::time_point insert_end = std::chrono::high_resolution_clock::now();
+
+        const std::chrono::high_resolution_clock::time_point retrieve_start = std::chrono::high_resolution_clock::now();
+        for(const auto &d: test_data){
+            volatile const auto foo = es.fetch(d.first).data();
+        }
+        const std::chrono::high_resolution_clock::time_point retrieve_end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Insertion time: " << (insert_end - insert_start).count() << std::endl;
+        std::cout << "Retrieval time: " << (retrieve_end - retrieve_start).count() << std::endl;
     }
-    const std::chrono::high_resolution_clock::time_point insert_end = std::chrono::high_resolution_clock::now();
 
-    const std::chrono::high_resolution_clock::time_point retrieve_start = std::chrono::high_resolution_clock::now();
-    for(const auto &d: test_data){
-        volatile const auto foo = es.fetch(d.first).data();
+    {
+        LMDB_Store es("example.mdb");
+
+        const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
+        for(const auto &d: test_data){
+            es.store(d.first, d.second);
+        }
+        const std::chrono::high_resolution_clock::time_point insert_end = std::chrono::high_resolution_clock::now();
+
+        const std::chrono::high_resolution_clock::time_point retrieve_start = std::chrono::high_resolution_clock::now();
+        for(const auto &d: test_data){
+            volatile const auto foo = es.fetch(d.first).data();
+        }
+        const std::chrono::high_resolution_clock::time_point retrieve_end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Insertion time: " << (insert_end - insert_start).count() << std::endl;
+        std::cout << "Retrieval time: " << (retrieve_end - retrieve_start).count() << std::endl;
     }
-    const std::chrono::high_resolution_clock::time_point retrieve_end = std::chrono::high_resolution_clock::now();
-
-    std::cout << "Insertion time: " << (insert_end - insert_start).count() << std::endl;
-    std::cout << "Retrieval time: " << (retrieve_end - retrieve_start).count() << std::endl;
 
     return 0;
 };
