@@ -43,6 +43,7 @@ std::string gen_random_alphanum(const size_t &len) {
 
 size_t NUM_TEST_OBJECTS = 1024;
 size_t OBJECT_MAX_SIZE = 64;
+size_t MAX_STORAGE = 17179869184;
 
 void test(Object_Store *os, const std::vector<std::pair<Id, Data>> &data){
     const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
@@ -67,6 +68,7 @@ int main(int argc, char* argv[]){
 	desc.add_options()
 		("num_test_objects", po::value<size_t>(&NUM_TEST_OBJECTS), "Number of test objects to store and retrieve")
 		("object_max_size", po::value<size_t>(&OBJECT_MAX_SIZE), "Maximum size of test objects")
+		("max_storage", po::value<size_t>(&MAX_STORAGE), "Maximum number of bytes to test store")
 		;
 
 	po::variables_map vm;
@@ -74,9 +76,7 @@ int main(int argc, char* argv[]){
     po::notify(vm);
 
     const size_t projected_storage = NUM_TEST_OBJECTS * (OBJECT_MAX_SIZE / 2);
-    const size_t max_storage = 17179869184;
-
-    assert(projected_storage < max_storage);
+    assert(projected_storage < MAX_STORAGE);
 
     std::vector<std::pair<Id, Data>> test_data;
 
