@@ -10,6 +10,11 @@
 
 namespace po = boost::program_options;
 
+size_t NUM_TEST_OBJECTS = 1024;
+size_t OBJECT_MAX_SIZE = 64;
+size_t MAX_STORAGE = 17179869184;
+size_t KEY_LENGTH = 64;
+
 static const char hex[] =
     "0123456789"
     "abcdef";
@@ -41,9 +46,9 @@ std::string gen_random_alphanum(const size_t &len) {
 	return s;
 }
 
-size_t NUM_TEST_OBJECTS = 1024;
-size_t OBJECT_MAX_SIZE = 64;
-size_t MAX_STORAGE = 17179869184;
+std::string random_key(){
+    return gen_random_hex(KEY_LENGTH);
+}
 
 void test(Object_Store *os, const std::vector<std::pair<Id, Data>> &data){
     const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
@@ -62,6 +67,17 @@ void test(Object_Store *os, const std::vector<std::pair<Id, Data>> &data){
     std::cout << "Retrieval time: " << (retrieve_end - retrieve_start).count() << std::endl;
 }
 
+std::vector<std::pair<Id, Data>> generate_data(const size_t &max_size, const size_t &num_objects){
+    std::vector<std::pair<Id, Data>> test_data;
+
+    for(size_t i = 0; i < num_objects; i++){
+        const size_t data_size = (rand() % (max_size- 1)) + 1;
+        test_data.push_back(std::pair<Id, Data>(Id(random_key()), Data(gen_random_alphanum(data_size))));
+    }
+
+    return test_data;
+}
+
 int main(int argc, char* argv[]){
 
 	po::options_description desc("Options");
@@ -78,14 +94,7 @@ int main(int argc, char* argv[]){
     const size_t projected_storage = NUM_TEST_OBJECTS * (OBJECT_MAX_SIZE / 2);
     assert(projected_storage < MAX_STORAGE);
 
-    std::vector<std::pair<Id, Data>> test_data;
-
-    /* Generate a large amount of test data */
-
-    for(size_t i = 0; i < NUM_TEST_OBJECTS; i++){
-        const size_t data_size = (rand() % (OBJECT_MAX_SIZE - 1)) + 1;
-        test_data.push_back(std::pair<Id, Data>(Id(gen_random_hex(64)), Data(gen_random_alphanum(data_size))));
-    }
+    std::vector<std::pair<Id, Data>> test_data = generate_data(OBJECT_MAX_SIZE, NUM_TEST_OBJECTS);
 
     /* Test and time */
 
