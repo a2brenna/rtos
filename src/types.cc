@@ -30,3 +30,7 @@ void Data::append(const Data &data){
 std::string Data::data() const{
     return _data;
 }
+
+bool operator==(const Data &lhs, const Data &rhs){
+    return lhs.data() == rhs.data();
+}

@@ -7,13 +7,18 @@
 #include <chrono>
 #include <boost/program_options.hpp>
 #include <cassert>
+#include <random>
 
 namespace po = boost::program_options;
 
-size_t NUM_TEST_OBJECTS = 1024;
+size_t NUM_TEST_OBJECTS = 128;
 size_t OBJECT_MAX_SIZE = 64;
 size_t MAX_STORAGE = 17179869184;
 size_t KEY_LENGTH = 64;
+double CORRECTNESS_COVERAGE = 1.00;
+
+std::random_device rd;
+std::mt19937 e2;
 
 static const char hex[] =
     "0123456789"
@@ -78,6 +83,25 @@ std::vector<std::pair<Id, Data>> generate_data(const size_t &max_size, const siz
     return test_data;
 }
 
+void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores, const std::vector<std::pair<Id, Data>> &data, const double &coverage){
+    std::uniform_real_distribution<> dist(0, 1);
+
+    for(const auto &d: data){
+        if( dist(e2) < CORRECTNESS_COVERAGE ){
+            for(auto &s: stores){
+                const auto stored = s.second->fetch(d.first);
+                if (d.second == stored){
+                    continue;
+                }
+                else{
+                    std::cout << d.second.data() << " : " << stored.data() << std::endl;
+                    std::cout << s.first << " failed" << std::endl;
+                }
+            }
+        }
+    }
+}
+
 int main(int argc, char* argv[]){
 
 	po::options_description desc("Options");
@@ -85,6 +109,7 @@ int main(int argc, char* argv[]){
 		("num_test_objects", po::value<size_t>(&NUM_TEST_OBJECTS), "Number of test objects to store and retrieve")
 		("object_max_size", po::value<size_t>(&OBJECT_MAX_SIZE), "Maximum size of test objects")
 		("max_storage", po::value<size_t>(&MAX_STORAGE), "Maximum number of bytes to test store")
+		("correctness_coverage", po::value<double>(&CORRECTNESS_COVERAGE), "Portion of test data to use for correctness test")
 		;
 
 	po::variables_map vm;
@@ -94,15 +119,23 @@ int main(int argc, char* argv[]){
     const size_t projected_storage = NUM_TEST_OBJECTS * (OBJECT_MAX_SIZE / 2);
     assert(projected_storage < MAX_STORAGE);
 
+    e2 = std::mt19937(rd());
+
     std::vector<std::pair<Id, Data>> test_data = generate_data(OBJECT_MAX_SIZE, NUM_TEST_OBJECTS);
+
+    std::vector<std::pair<std::string, Object_Store *>> stores;
 
     /* Test and time */
 
     Ephemeral_Store es;
+    stores.push_back(std::pair<std::string, Object_Store *>("Ephemeral_Store",&es));
     test( &es, test_data );
 
     LMDB_Store ls("example.mdb");
+    stores.push_back(std::pair<std::string, Object_Store *>("LMDB_Store",&ls));
     test( &ls, test_data );
+
+    correctness_test(stores, test_data, CORRECTNESS_COVERAGE);
 
     return 0;
 };

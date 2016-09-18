@@ -41,4 +41,6 @@ class Data {
 
 };
 
+bool operator==(const Data &lfs, const Data &rhs);
+
 #endif
