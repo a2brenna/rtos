@@ -1,5 +1,4 @@
 #include "ephemeral_store.h"
-#include "lmdb_store.h"
 
 #include <iostream>
 #include <vector>
@@ -130,10 +129,6 @@ int main(int argc, char* argv[]){
     Ephemeral_Store es;
     stores.push_back(std::pair<std::string, Object_Store *>("Ephemeral_Store",&es));
     test( &es, test_data );
-
-    LMDB_Store ls("example.mdb");
-    stores.push_back(std::pair<std::string, Object_Store *>("LMDB_Store",&ls));
-    test( &ls, test_data );
 
     correctness_test(stores, test_data, CORRECTNESS_COVERAGE);
 
