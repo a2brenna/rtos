@@ -21,13 +21,10 @@ std::random_device rd;
 std::mt19937 e2;
 
 static const char hex[] =
-    "0123456789"
-    "abcdef";
+    "0123456789abcdef";
 
 static const char alphanum[] =
-    "0123456789"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz";
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 std::string gen_random_hex(const size_t &len) {
 	std::string s;
@@ -77,7 +74,10 @@ std::vector<std::pair<Id, Data>> generate_data(const size_t &max_size, const siz
 
     for(size_t i = 0; i < num_objects; i++){
         const size_t data_size = (rand() % (max_size- 1)) + 1;
-        test_data.push_back(std::pair<Id, Data>(Id(random_key()), Data(gen_random_alphanum(data_size))));
+        Id random_id(random_key());
+        Data random_data(gen_random_alphanum(data_size));
+        //std::cout << random_id.id().c_str() << " " << random_data.data().c_str() << std::endl;
+        test_data.push_back(std::pair<Id, Data>(random_id, random_data));
     }
 
     return test_data;
