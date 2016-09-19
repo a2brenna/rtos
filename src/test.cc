@@ -30,7 +30,7 @@ std::string gen_random_hex(const size_t &len) {
 	std::string s;
 
     for (size_t i = 0; i < len; ++i) {
-        const char c = hex[rand() % (sizeof(alphanum) - 1)];
+        const char c = hex[rand() % (sizeof(hex) - 1)];
         s.append(1, c);
     }
 
