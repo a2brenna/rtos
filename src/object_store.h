@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+class E_EXISTS {
+
+};
+
 class Object_Store {
 
     public:

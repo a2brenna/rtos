@@ -1,5 +1,6 @@
 #include "ephemeral_store.h"
 #include "leveldb_store.h"
+#include "fs_store.h"
 
 #include <iostream>
 #include <vector>
@@ -11,8 +12,8 @@
 
 namespace po = boost::program_options;
 
-size_t NUM_TEST_OBJECTS = 128;
-size_t OBJECT_MAX_SIZE = 64;
+size_t NUM_TEST_OBJECTS = 256;
+size_t OBJECT_MAX_SIZE = 1024 * 1024 * 4;
 size_t MAX_STORAGE = 17179869184;
 size_t KEY_LENGTH = 64;
 double CORRECTNESS_COVERAGE = 1.00;
@@ -76,7 +77,6 @@ std::vector<std::pair<Id, Data>> generate_data(const size_t &max_size, const siz
         const size_t data_size = (rand() % (max_size- 1)) + 1;
         Id random_id(random_key());
         Data random_data(gen_random_alphanum(data_size));
-        //std::cout << random_id.id().c_str() << " " << random_data.data().c_str() << std::endl;
         test_data.push_back(std::pair<Id, Data>(random_id, random_data));
     }
 
@@ -134,6 +134,10 @@ int main(int argc, char* argv[]){
     LevelDB_Store ls("example.ldb");
     stores.push_back(std::pair<std::string, Object_Store *>("LevelDB_Store ",&ls));
     test( &ls, test_data );
+
+    FS_Store fs("example.fs", 5, 1);
+    stores.push_back(std::pair<std::string, Object_Store *>("FS_Store ",&fs));
+    test( &fs, test_data );
 
     correctness_test(stores, test_data, CORRECTNESS_COVERAGE);
 
