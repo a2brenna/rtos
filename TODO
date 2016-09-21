@@ -5,3 +5,4 @@ Add correctness mode that runs different backends against each other
     Add tests for append correctness
     Add tests for write once correctness
 Transaction logging: Complete writes, metadata for reads
+Draft wire protocol using capn' proto
