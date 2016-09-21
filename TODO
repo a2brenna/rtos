@@ -1,5 +1,7 @@
 cmdline options for test to switch between backends
 script to run perf ./test for different backends
+Write leveldb existence check in write
 Add correctness mode that runs different backends against each other
     Add tests for append correctness
-Transaction logging
+    Add tests for write once correctness
+Transaction logging: Complete writes, metadata for reads
