@@ -38,7 +38,6 @@ void FS_Store::store(const Id &id, const Data &data){
         std::ofstream f;
         f.open(p);
         f << data.data();
-        f.flush();
         f.close();
     }
 }
@@ -47,7 +46,6 @@ void FS_Store::append(const Id &id, const Data &data){
     std::ofstream f;
     f.open(_find(id), std::ios::app);
     f << data.data();
-    f.flush();
     f.close();
 }
 
