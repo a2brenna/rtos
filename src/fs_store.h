@@ -2,6 +2,7 @@
 #define __FS_STORE_H__
 
 #include "object_store.h"
+#include <fstream>
 
 class FS_Store : public Object_Store{
 
@@ -12,12 +13,15 @@ class FS_Store : public Object_Store{
         Data fetch(const Id &id) const;
 
         FS_Store(const std::string &path, const size_t &depth, const size_t &width);
+        ~FS_Store();
 
     private:
 
         std::string _path;
         size_t _depth;
         size_t _width;
+
+        mutable std::ofstream _log;
 
         std::string _find(const Id &id) const;
 
