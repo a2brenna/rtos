@@ -13,6 +13,7 @@ class FS_Store : public Object_Store{
         Data fetch(const Id &id) const;
 
         FS_Store(const std::string &path, const size_t &depth, const size_t &width);
+        FS_Store(const std::string &path, const size_t &depth, const size_t &width, const std::string &log_file);
         ~FS_Store();
 
     private:
@@ -24,6 +25,7 @@ class FS_Store : public Object_Store{
         mutable std::ofstream _log;
 
         std::string _find(const Id &id) const;
+        void _replay_log(std::ifstream &log_file);
 
 };
 

@@ -1,6 +1,8 @@
 #include "fs_store.h"
 #include <cassert>
 #include <chrono>
+#include <boost/algorithm/string.hpp>
+#include <vector>
 
 #include <iostream>
 #include <fstream>
@@ -15,8 +17,56 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     _log.open(_path + "/log");
 }
 
+//TODO: Collapse this by using some technology
+FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &width, const std::string &log_path){
+    _path = path;
+    _depth = depth;
+    _width = width;
+
+    //replay log
+    std::ifstream l;
+    l.open(log_path);
+    _replay_log(l);
+
+    _log.open(_path + "/log");
+}
+
 FS_Store::~FS_Store(){
     _log.close();
+}
+
+void FS_Store::_replay_log(std::ifstream &log_file){
+    std::vector<std::string> tokens;
+    std::string line;
+
+    while(std::getline(log_file, line)){
+        split(tokens, line, boost::is_any_of(" "));
+        assert(tokens.size() > 1);
+
+        const std::string operation = tokens[1];
+
+        if(operation == "STORE"){
+            assert(tokens.size() == 4);
+            const Id key(tokens[2]);
+            const Data data(base64_decode(tokens[3]));
+
+            store(key, data);
+        }
+        else if(operation == "APPEND"){
+            assert(tokens.size() == 4);
+            const Id key(tokens[2]);
+            const Data data(base64_decode(tokens[3]));
+
+            append(key, data);
+        }
+        else if(operation == "FETCH"){
+
+        }
+        else{
+            assert(false);
+        }
+
+    }
 }
 
 std::string FS_Store::_find(const Id &id) const{
