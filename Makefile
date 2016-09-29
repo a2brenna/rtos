@@ -6,7 +6,15 @@ PREFIX=/usr
 CXX=g++
 CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
-all: test
+all: test librtosfs.so
+
+install: all
+	mkdir -p ${DESTDIR}/${PREFIX}/lib
+	mkdir -p ${DESTDIR}/${PREFIX}/include/rtos
+	install -m 444 librtosfs.so ${DESTDIR}/${PREFIX}/lib/
+	install -m 444 src/object_store.h ${DESTDIR}/${PREFIX}/include/rtos/
+	install -m 444 src/types.h ${DESTDIR}/${PREFIX}/include/rtos/
+	install -m 444 src/fs_store.h ${DESTDIR}/${PREFIX}/include/rtos/
 
 test: src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o
 	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o -lboost_program_options -lleveldb
@@ -19,6 +27,9 @@ leveldb_store.o: src/leveldb_store.h src/leveldb_store.cc src/types.h
 
 fs_store.o: src/fs_store.h src/fs_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o fs_store.o -c src/fs_store.cc
+
+librtosfs.so: fs_store.o types.o
+	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librtosfs.so -o librtosfs.so fs_store.o types.o
 
 types.o: src/types.h src/types.cc
 	${CXX} ${CXXFLAGS} -o types.o -c src/types.cc
