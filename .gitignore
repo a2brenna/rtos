@@ -3,5 +3,5 @@
 *.a
 *.o
 test
-example.ldb
-example.fs
+example.*
+example_*
