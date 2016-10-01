@@ -15,6 +15,7 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     _width = width;
 
     _log.open(_path + "/log");
+    assert(_log);
 }
 
 //TODO: Collapse this by using some technology
@@ -26,13 +27,16 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     //replay log
     std::ifstream l;
     l.open(log_path);
+    assert(l);
     _replay_log(l);
 
     _log.open(_path + "/log");
+    assert(_log);
 }
 
 FS_Store::~FS_Store(){
     _log.close();
+    assert(_log);
 }
 
 void FS_Store::_replay_log(std::ifstream &log_file){
@@ -60,6 +64,7 @@ void FS_Store::_replay_log(std::ifstream &log_file){
             append(key, data);
         }
         else if(operation == "FETCH"){
+            assert(false);
 
         }
         else{
@@ -88,6 +93,7 @@ std::string FS_Store::_find(const Id &id) const{
 void FS_Store::store(const Id &id, const Data &data){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " STORE " << id.id() << " " << base64_encode(data.data()) << std::endl;
+    assert(_log);
     const std::string p = _find(id);
     struct stat s;
     const auto r = stat( p.c_str(), &s); //TODO: investigate other return codes
@@ -97,10 +103,13 @@ void FS_Store::store(const Id &id, const Data &data){
     else{
         std::ofstream f;
         f.open(p);
+        assert(f);
         //TODO: check for errors?
         f << data.data();
+        assert(f);
         //TODO: check for errors?
         f.close();
+        assert(f);
         //TODO: check for errors?
     }
 }
@@ -108,12 +117,16 @@ void FS_Store::store(const Id &id, const Data &data){
 void FS_Store::append(const Id &id, const Data &data){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " APPEND " << id.id() << " " << base64_encode(data.data()) << std::endl;
+    assert(_log);
     std::ofstream f;
     f.open(_find(id), std::ios::app);
+    assert(f);
     //TODO: check for errors?
     f << data.data();
+    assert(f);
     //TODO: check for errors?
     f.close();
+    assert(f);
     //TODO: check for errors?
 }
 
@@ -122,11 +135,14 @@ Data FS_Store::fetch(const Id &id) const{
     _log << now << " FETCH " << id.id() << std::endl;
     std::ifstream f;
     f.open(_find(id));
+    assert(f);
     //TODO: check for errors?
     std::string s;
     f >> s;
+    assert(f);
     //TODO: check for errors?
     f.close();
+    assert(f);
     //TODO: check for errors?
     return Data(s);
 }
