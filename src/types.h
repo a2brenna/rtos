@@ -3,9 +3,6 @@
 
 #include <string>
 
-//typedef std::string Id;
-//typedef std::string Data;
-
 class Id {
 
     public:
@@ -14,10 +11,11 @@ class Id {
         Id(const std::string &id);
 
         std::string id() const;
+        const char* buf() const;
 
     private:
 
-        std::string _id;
+        unsigned char _id[32];
 
 
 };
