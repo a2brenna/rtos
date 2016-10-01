@@ -76,7 +76,7 @@ void FS_Store::_replay_log(std::ifstream &log_file){
 
 std::string FS_Store::_find(const Id &id) const{
     std::string path = _path + "/";
-    const std::string i = id.id();
+    const std::string i = id.base16();
 
     size_t k = 0;
     for(size_t j = 0; j < _depth; j++){
@@ -92,7 +92,7 @@ std::string FS_Store::_find(const Id &id) const{
 
 void FS_Store::store(const Id &id, const Data &data){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " STORE " << id.id() << " " << base64_encode(data.data()) << std::endl;
+    _log << now << " STORE " << id.base16() << " " << base64_encode(data.data()) << std::endl;
     assert(_log);
     const std::string p = _find(id);
     struct stat s;
@@ -116,7 +116,7 @@ void FS_Store::store(const Id &id, const Data &data){
 
 void FS_Store::append(const Id &id, const Data &data){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " APPEND " << id.id() << " " << base64_encode(data.data()) << std::endl;
+    _log << now << " APPEND " << id.base16() << " " << base64_encode(data.data()) << std::endl;
     assert(_log);
     std::ofstream f;
     f.open(_find(id), std::ios::app);
@@ -132,7 +132,7 @@ void FS_Store::append(const Id &id, const Data &data){
 
 Data FS_Store::fetch(const Id &id) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " FETCH " << id.id() << std::endl;
+    _log << now << " FETCH " << id.base16() << std::endl;
     std::ifstream f;
     f.open(_find(id));
     assert(f);

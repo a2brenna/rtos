@@ -10,7 +10,7 @@ class Id {
         Id();
         Id(const std::string &id);
 
-        std::string id() const;
+        std::string base16() const;
         const char* buf() const;
 
     private:

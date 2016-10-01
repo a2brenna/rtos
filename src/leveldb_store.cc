@@ -4,7 +4,7 @@
 #include <leveldb/db.h>
 
 void LevelDB_Store::store(const Id &id, const Data &data){
-    _db->Put(_wo, id.id(), data.data());
+    _db->Put(_wo, id.base16(), data.data());
 }
 
 void LevelDB_Store::append(const Id &id, const Data &data){
@@ -15,7 +15,7 @@ void LevelDB_Store::append(const Id &id, const Data &data){
 
 Data LevelDB_Store::fetch(const Id &id) const{
     std::string r;
-    _db->Get(leveldb::ReadOptions(), id.id(), &r);
+    _db->Get(leveldb::ReadOptions(), id.base16(), &r);
     return Data(r);
 }
 
