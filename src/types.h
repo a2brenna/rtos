@@ -9,6 +9,7 @@ class Id {
 
         Id();
         Id(const std::string &id);
+        Id(const char *buf, const size_t &len);
 
         std::string base16() const;
         const char* buf() const;

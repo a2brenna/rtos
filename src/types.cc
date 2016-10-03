@@ -13,6 +13,11 @@ Id::Id(const std::string &id){
     crypto_hash_sha256(_id, (const unsigned char *)id.c_str(), id.size());
 }
 
+Id::Id(const char *buf, const size_t &len){
+    assert(len == 32);
+    strncpy((char *)_id, buf, 32);
+}
+
 std::string Id::base16() const{
     return base16_encode(_id, 32);
 }
