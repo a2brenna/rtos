@@ -14,7 +14,7 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     _depth = depth;
     _width = width;
 
-    _log.open(_path + "/log");
+    _log.open(_path + "/log", std::ifstream::app);
     assert(_log);
 }
 
@@ -29,8 +29,9 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     l.open(log_path);
     assert(l);
     _replay_log(l);
+    l.close();
 
-    _log.open(_path + "/log");
+    _log.open(_path + "/log", std::ifstream::app);
     assert(_log);
 }
 
