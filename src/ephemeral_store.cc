@@ -13,6 +13,6 @@ Data Ephemeral_Store::fetch(const Id &id) const{
         return _store.at(id);
     }
     catch(std::out_of_range e){
-        return Data("");
+        throw E_OBJECT_DNE();
     }
 }

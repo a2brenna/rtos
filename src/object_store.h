@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-class E_EXISTS {
+class E_OBJECT_EXISTS {};
 
-};
+class E_OBJECT_DNE {};
 
 class Object_Store {
 

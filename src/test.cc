@@ -100,6 +100,19 @@ void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores,
             }
         }
     }
+
+    for(auto &s: stores){
+        bool exception_caught;
+        try{
+            s.second->fetch(std::string("Fake_Key"));
+            exception_caught = false;
+        }
+        catch(E_OBJECT_DNE e){
+            exception_caught = true;
+        }
+
+        assert(exception_caught);
+    }
 }
 
 int main(int argc, char* argv[]){
@@ -131,9 +144,11 @@ int main(int argc, char* argv[]){
     stores.push_back(std::pair<std::string, Object_Store *>("Ephemeral_Store",&es));
     test( &es, test_data );
 
+    /*
     LevelDB_Store ls("example.ldb");
     stores.push_back(std::pair<std::string, Object_Store *>("LevelDB_Store ",&ls));
     test( &ls, test_data );
+    */
 
     FS_Store fs("example.fs", 5, 1);
     stores.push_back(std::pair<std::string, Object_Store *>("FS_Store ",&fs));

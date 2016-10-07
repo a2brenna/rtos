@@ -99,7 +99,7 @@ void FS_Store::store(const Id &id, const Data &data){
     struct stat s;
     const auto r = stat( p.c_str(), &s); //TODO: investigate other return codes
     if( r == 0 ){
-        throw E_EXISTS();
+        throw E_OBJECT_EXISTS();
     }
     else{
         std::ofstream f;
@@ -135,15 +135,19 @@ Data FS_Store::fetch(const Id &id) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " FETCH " << id.base16() << std::endl;
     std::ifstream f;
-    f.open(_find(id));
-    assert(f);
-    //TODO: check for errors?
-    std::string s;
-    f >> s;
-    assert(f);
-    //TODO: check for errors?
-    f.close();
-    assert(f);
-    //TODO: check for errors?
-    return Data(s);
+    f.open(_find(id), std::ios::in);
+    if(!f){
+        throw E_OBJECT_DNE();
+    }
+    else{
+        //TODO: check for errors?
+        std::string s;
+        f >> s;
+        assert(f);
+        //TODO: check for errors?
+        f.close();
+        assert(f);
+        //TODO: check for errors?
+        return Data(s);
+    }
 }
