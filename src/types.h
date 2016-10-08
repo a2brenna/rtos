@@ -23,6 +23,8 @@ class Id {
 
 bool operator<(const Id &lhs, const Id &rhs);
 
+//TODO: Make a better type for this that supports a safe [] operator...?
+//TODO: Make this support some sort of T extract<T>(const size_t &index) that safely checks size and casting to ensure you don't overrun the end when extracting type T from bytestring at position index
 class Data {
 
     public:
