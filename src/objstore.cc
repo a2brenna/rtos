@@ -72,7 +72,8 @@ int main(int argc, char* argv[]){
         }
     }
     else if(ret){
-        std::cout << fs.fetch(id).data();
+        const std::string s = fs.fetch(id).data();
+        std::cout << s;
     }
     else{
         std::cout << desc << std::endl;

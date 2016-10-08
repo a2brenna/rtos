@@ -134,20 +134,26 @@ void FS_Store::append(const Id &id, const Data &data){
 Data FS_Store::fetch(const Id &id) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " FETCH " << id.base16() << std::endl;
+
     std::ifstream f;
     f.open(_find(id), std::ios::in);
+
+    //TODO: Be more specific in checking this error
     if(!f){
         throw E_OBJECT_DNE();
     }
     else{
-        //TODO: check for errors?
+        f.seekg(0, std::ios::end);
+        assert(f);
+        size_t file_size = f.tellg();
+
         std::string s;
-        f >> s;
+        s.resize(file_size);
+
+        f.seekg(0);
+        f.read(&s[0], file_size);
         assert(f);
-        //TODO: check for errors?
-        f.close();
-        assert(f);
-        //TODO: check for errors?
+
         return Data(s);
     }
 }
