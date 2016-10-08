@@ -3,5 +3,6 @@
 *.a
 *.o
 test
+objstore
 example.*
 example_*

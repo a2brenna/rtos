@@ -6,7 +6,7 @@ PREFIX=/usr
 CXX=g++
 CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
-all: test librtosfs.so
+all: test objstore librtosfs.so
 
 install: all
 	mkdir -p ${DESTDIR}/${PREFIX}/lib
@@ -19,6 +19,9 @@ install: all
 
 test: src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o encode.o
 	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o encode.o -lboost_program_options -lleveldb -lsodium
+
+objstore: src/objstore.cc fs_store.o types.o encode.o
+	${CXX} ${CXXFLAGS} -o objstore src/objstore.cc fs_store.o types.o encode.o -lboost_program_options -lsodium
 
 ephemeral_store.o: src/ephemeral_store.h src/ephemeral_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o ephemeral_store.o -c src/ephemeral_store.cc
