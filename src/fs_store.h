@@ -11,6 +11,9 @@ class FS_Store : public Object_Store{
 		void store(const Id &id, const Data &data);
         void append(const Id &id, const Data &data);
         Data fetch(const Id &id) const;
+        Data fetch(const Id &id, const size_t &start, const size_t &num_bytes) const;
+        Data fetch_head(const Id &id, const size_t &num_bytes) const;
+        Data fetch_tail(const Id &id, const size_t &num_bytes) const;
 
         FS_Store(const std::string &path, const size_t &depth, const size_t &width);
         FS_Store(const std::string &path, const size_t &depth, const size_t &width, const std::string &log_file);

@@ -133,7 +133,7 @@ void FS_Store::append(const Id &id, const Data &data){
 
 Data FS_Store::fetch(const Id &id) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " FETCH " << id.base16() << std::endl;
+    _log << now << " FETCH_ALL " << id.base16() << std::endl;
 
     std::ifstream f;
     f.open(_find(id), std::ios::in);
@@ -152,6 +152,78 @@ Data FS_Store::fetch(const Id &id) const{
 
         f.seekg(0);
         f.read(&s[0], file_size);
+        assert(f);
+
+        return Data(s);
+    }
+}
+
+Data FS_Store::fetch(const Id &id, const size_t &start, const size_t &num_bytes) const{
+    const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    _log << now << " FETCH_WINDOW " << id.base16() << " " << start << " " << num_bytes << std::endl;
+
+    std::ifstream f;
+    f.open(_find(id), std::ios::in);
+
+    //TODO: Be more specific in checking this error
+    if(!f){
+        throw E_OBJECT_DNE();
+    }
+    else{
+        f.seekg(start, std::ios::beg);
+        assert(f);
+
+        std::string s;
+        s.resize(num_bytes);
+
+        f.read(&s[0], num_bytes);
+        assert(f);
+
+        return Data(s);
+    }
+}
+
+Data FS_Store::fetch_head(const Id &id, const size_t &num_bytes) const{
+    const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    _log << now << " FETCH_HEAD " << id.base16() << " " << num_bytes << std::endl;
+
+    std::ifstream f;
+    f.open(_find(id), std::ios::in);
+
+    //TODO: Be more specific in checking this error
+    if(!f){
+        throw E_OBJECT_DNE();
+    }
+    else{
+        std::string s;
+        s.resize(num_bytes);
+
+        f.read(&s[0], num_bytes);
+        assert(f);
+
+        return Data(s);
+    }
+}
+
+Data FS_Store::fetch_tail(const Id &id, const size_t &num_bytes) const{
+    const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    _log << now << " FETCH_TAIL " << id.base16() << " " << num_bytes << std::endl;
+
+    std::ifstream f;
+    f.open(_find(id), std::ios::in);
+
+    //TODO: Be more specific in checking this error
+    if(!f){
+        throw E_OBJECT_DNE();
+    }
+    else{
+        f.seekg(num_bytes, std::ios::end);
+        assert(f);
+
+        std::string s;
+        s.resize(num_bytes);
+
+        f.read(&s[0], num_bytes);
         assert(f);
 
         return Data(s);
