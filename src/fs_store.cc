@@ -217,7 +217,7 @@ Data FS_Store::fetch_tail(const Id &id, const size_t &num_bytes) const{
         throw E_OBJECT_DNE();
     }
     else{
-        f.seekg(num_bytes, std::ios::end);
+        f.seekg(-(ssize_t)num_bytes, std::ios::end);
         assert(f);
 
         std::string s;
