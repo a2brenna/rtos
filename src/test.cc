@@ -113,6 +113,29 @@ void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores,
 
         assert(exception_caught);
     }
+
+    for(auto &s: stores){
+        const std::string test_string = "0123456789";
+        const Id test_id(std::string("range_fetch_test_key"));
+
+        s.second->store(test_id, test_string);
+
+        if( s.second->fetch_head(test_id, 2).data().compare("01") ){
+            std::cout << "fetch_head failed" << std::endl;
+            std::cout << s.second->fetch_head(test_id, 2).data() << std::endl;
+        }
+
+        if( s.second->fetch_tail(test_id, 2).data().compare("89") ){
+            std::cout << "fetch_tail failed" << std::endl;
+            std::cout << s.second->fetch_tail(test_id, 2).data() << std::endl;
+        }
+
+        if( s.second->fetch(test_id, 2, 2).data().compare("23") ){
+            std::cout << "fetch on range failed" << std::endl;
+            std::cout << s.second->fetch(test_id, 2, 2).data() << std::endl;
+        }
+
+    }
 }
 
 int main(int argc, char* argv[]){
