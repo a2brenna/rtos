@@ -163,6 +163,27 @@ Data FS_Store::fetch(const Id &id) const{
 }
 
 Data FS_Store::fetch(const Id &id, const size_t &start, const size_t &num_bytes) const{
+    std::string s;
+    s.resize(num_bytes);
+    fetch(id, start, num_bytes, &s[0]);
+    return Data(s);
+}
+
+Data FS_Store::fetch_head(const Id &id, const size_t &num_bytes) const{
+    std::string s;
+    s.resize(num_bytes);
+    fetch_head(id, num_bytes, &s[0]);
+    return Data(s);
+}
+
+Data FS_Store::fetch_tail(const Id &id, const size_t &num_bytes) const{
+    std::string s;
+    s.resize(num_bytes);
+    fetch_tail(id, num_bytes, &s[0]);
+    return Data(s);
+}
+
+void FS_Store::fetch(const Id &id, const size_t &start, const size_t &num_bytes, char *buf) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " FETCH_WINDOW " << id.base16() << " " << start << " " << num_bytes << std::endl;
 
@@ -177,17 +198,12 @@ Data FS_Store::fetch(const Id &id, const size_t &start, const size_t &num_bytes)
         f.seekg(start, std::ios::beg);
         assert(f);
 
-        std::string s;
-        s.resize(num_bytes);
-
-        f.read(&s[0], num_bytes);
+        f.read(buf, num_bytes);
         assert(f);
-
-        return Data(s);
     }
 }
 
-Data FS_Store::fetch_head(const Id &id, const size_t &num_bytes) const{
+void FS_Store::fetch_head(const Id &id, const size_t &num_bytes, char *buf) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " FETCH_HEAD " << id.base16() << " " << num_bytes << std::endl;
 
@@ -199,17 +215,12 @@ Data FS_Store::fetch_head(const Id &id, const size_t &num_bytes) const{
         throw E_OBJECT_DNE();
     }
     else{
-        std::string s;
-        s.resize(num_bytes);
-
-        f.read(&s[0], num_bytes);
+        f.read(buf, num_bytes);
         assert(f);
-
-        return Data(s);
     }
 }
 
-Data FS_Store::fetch_tail(const Id &id, const size_t &num_bytes) const{
+void FS_Store::fetch_tail(const Id &id, const size_t &num_bytes, char *buf) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " FETCH_TAIL " << id.base16() << " " << num_bytes << std::endl;
 
@@ -223,13 +234,7 @@ Data FS_Store::fetch_tail(const Id &id, const size_t &num_bytes) const{
     else{
         f.seekg(-(ssize_t)num_bytes, std::ios::end);
         assert(f);
-
-        std::string s;
-        s.resize(num_bytes);
-
-        f.read(&s[0], num_bytes);
+        f.read(buf, num_bytes);
         assert(f);
-
-        return Data(s);
     }
 }

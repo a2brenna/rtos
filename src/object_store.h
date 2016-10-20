@@ -16,8 +16,11 @@ class Object_Store {
         virtual void append(const Id &id, const char *data, const size_t &size) = 0;
         virtual Data fetch_head(const Id &id, const size_t &num_bytes) const = 0;
         virtual Data fetch_tail(const Id &id, const size_t &num_bytes) const = 0;
+        virtual void fetch_head(const Id &id, const size_t &num_bytes, char *buf) const = 0;
+        virtual void fetch_tail(const Id &id, const size_t &num_bytes, char *buf) const = 0;
         virtual Data fetch(const Id &id) const = 0;
         virtual Data fetch(const Id &id, const size_t &start, const size_t &num_bytes) const = 0;
+        virtual void fetch(const Id &id, const size_t &start, const size_t &num_bytes, char *buf) const = 0;
 
 };
 #endif
