@@ -10,6 +10,7 @@ class FS_Store : public Object_Store{
 
 		void store(const Id &id, const Data &data);
         void append(const Id &id, const Data &data);
+        void append(const Id &id, const char *data, const size_t &size);
         Data fetch(const Id &id) const;
         Data fetch(const Id &id, const size_t &start, const size_t &num_bytes) const;
         Data fetch_head(const Id &id, const size_t &num_bytes) const;

@@ -116,14 +116,18 @@ void FS_Store::store(const Id &id, const Data &data){
 }
 
 void FS_Store::append(const Id &id, const Data &data){
+    append(id, data.data().c_str(), data.data().size());
+}
+
+void FS_Store::append(const Id &id, const char *data, const size_t &size){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " APPEND " << id.base16() << " " << base64_encode(data.data()) << std::endl;
+    _log << now << " APPEND " << id.base16() << " " << base64_encode((const unsigned char*)data, size) << std::endl;
     assert(_log);
     std::ofstream f;
     f.open(_find(id), std::ios::app);
     assert(f);
     //TODO: check for errors?
-    f << data.data();
+    f.write(data, size);
     assert(f);
     //TODO: check for errors?
     f.close();
