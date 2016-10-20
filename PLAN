@@ -1,0 +1,29 @@
+Wire Protocol: Pending
+    Capnproto based wire protocol for accessing remote Object Store that exposes
+a superset of reference implementation (FS_Store).  Allows drop in replacement
+of local Object Store with a remote Object Store.
+
+Performance Tracking: Pending
+    Log timing/metadata information for all requests to underlying storage and
+for all incoming requests.
+
+Object Metadata: Pending
+    Allow clients to retrieve Object size/ctime/mtime/atime etc. Either use
+underlying storage (posix fs) or track this independantly.
+
+Multi-Op Support: Pending
+    Support for executing multiple standard operations at a time.  Wire protocol
+should send them all at once and receive return codes/exception information for
+them all at once.
+
+Transaction Support: Pending
+    Multi-Ops that succeed or fail atomically.
+
+Server Side Copy: Pending
+    Command for creating a copy of an Object addressed by a new key.  Exploit
+underlying storage's ability to do COW (btrfs etc.) to make this operation as
+fast as possible, but fallback to creating full copies.
+
+Evolve/Mutate: Pending
+    Exploit Server Side Copy implementation to allow a client to atomically copy
+an Object and then perform a mutation before returning.

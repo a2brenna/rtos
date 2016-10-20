@@ -2,8 +2,5 @@ script to run perf ./test for different backends
 Write leveldb existence check in write
 Add correctness mode that runs different backends against each other
     Add tests for append correctness
-Add performance tracking
-Draft wire protocol using capn' proto
-Add additional functions for getting metadata about an object (size, mtime, ctime, etc.)
 Investigate maintaining a set of deleted keys by using a wide bloom/cuckoo filter
 Investigate some sort of mmap file based temp caching so we can manipulate objects larger than RAM
