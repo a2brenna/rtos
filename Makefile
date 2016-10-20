@@ -16,6 +16,7 @@ install: all
 	install -m 444 src/types.h ${DESTDIR}/${PREFIX}/include/rtos/
 	install -m 444 src/fs_store.h ${DESTDIR}/${PREFIX}/include/rtos/
 	install -m 444 src/encode.h ${DESTDIR}/${PREFIX}/include/rtos/
+	install -m 444 src/ref_log.h ${DESTDIR}/${PREFIX}/include/rtos/
 
 test: src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o encode.o
 	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o leveldb_store.o fs_store.o types.o encode.o -lboost_program_options -lleveldb -lsodium
@@ -35,8 +36,11 @@ fs_store.o: src/fs_store.h src/fs_store.cc src/types.h
 encode.o: src/encode.h src/encode.cc
 	${CXX} ${CXXFLAGS} -o encode.o -c src/encode.cc
 
-librtosfs.so: fs_store.o types.o encode.o
-	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librtosfs.so -o librtosfs.so fs_store.o types.o encode.o
+ref_log.o: src/ref_log.h src/ref_log.cc
+	${CXX} ${CXXFLAGS} -o ref_log.o -c src/ref_log.cc
+
+librtosfs.so: fs_store.o types.o encode.o ref_log.o
+	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librtosfs.so -o librtosfs.so fs_store.o types.o encode.o ref_log.o
 
 types.o: src/types.h src/types.cc
 	${CXX} ${CXXFLAGS} -o types.o -c src/types.cc
