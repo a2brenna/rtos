@@ -27,7 +27,7 @@ static const char* s_hextable[256] =
     "fc", "fd", "fe", "ff"
 };
 
-std::string base64_encode(const std::string& s) {
+std::string base64_encode(const unsigned char s[], const size_t size) {
   namespace bai = boost::archive::iterators;
 
   std::stringstream os;
@@ -37,11 +37,15 @@ std::string base64_encode(const std::string& s) {
   // retrieve 6 bit integers from a sequence of 8 bit bytes
   <bai::transform_width<const char *, 6, 8> > base64_enc; // compose all the above operations in to a new iterator
 
-  std::copy(base64_enc(s.c_str()), base64_enc(s.c_str() + s.size()),
+  std::copy(base64_enc(s), base64_enc(s + size),
             std::ostream_iterator<char>(os));
 
-  os << base64_padding[s.size() % 3];
+  os << base64_padding[size % 3];
   return os.str();
+}
+
+std::string base64_encode(const std::string& s) {
+    return base64_encode((unsigned char *)s.c_str(), s.size());
 }
 
 std::string base64_decode(const std::string& s) {
