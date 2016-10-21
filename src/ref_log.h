@@ -10,16 +10,16 @@
 class Ref_Log {
 
     public:
-        Ref_Log(const Id &id, std::shared_ptr<Object_Store> backend);
-        std::pair<std::chrono::high_resolution_clock::time_point, Id> latest_ref() const;
-        std::vector<std::pair<std::chrono::high_resolution_clock::time_point, Id>> all_refs() const;
-        std::pair<std::chrono::high_resolution_clock::time_point, Data> latest_object() const;
+        Ref_Log(const Ref&id, std::shared_ptr<Object_Store> backend);
+        std::pair<std::chrono::high_resolution_clock::time_point, Ref> latest_ref() const;
+        std::vector<std::pair<std::chrono::high_resolution_clock::time_point, Ref>> all_refs() const;
+        std::pair<std::chrono::high_resolution_clock::time_point, Object> latest_object() const;
 
-        void append_ref(const Id &id);
-        void update_object(const Data &data);
+        void append_ref(const Ref &id);
+        void update_object(const Object &data);
 
     private:
-        Id _id;
+        Ref _id;
         std::shared_ptr<Object_Store> _backend;
 
 };

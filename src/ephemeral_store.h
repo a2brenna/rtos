@@ -8,12 +8,12 @@
 class Ephemeral_Store : public Object_Store {
 
     public:
-        void store(const Id &id, const Data &data);
-        void append(const Id &id, const Data &data);
-        Data fetch(const Id &id) const;
+        void store(const Ref&id, const Object &data);
+        void append(const Ref&id, const Object &data);
+        Object fetch(const Ref&id) const;
 
     private:
-        std::map<Id, Data> _store;
+        std::map<Ref, Object> _store;
 
 };
 #endif

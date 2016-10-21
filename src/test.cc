@@ -52,7 +52,7 @@ std::string random_key(){
     return gen_random_hex(KEY_LENGTH);
 }
 
-void test(Object_Store *os, const std::vector<std::pair<Id, Data>> &data){
+void test(Object_Store *os, const std::vector<std::pair<Ref, Object>> &data){
     const std::chrono::high_resolution_clock::time_point insert_start = std::chrono::high_resolution_clock::now();
     for(const auto &d: data){
         os->store(d.first, d.second);
@@ -69,20 +69,20 @@ void test(Object_Store *os, const std::vector<std::pair<Id, Data>> &data){
     std::cout << "Retrieval time: " << (retrieve_end - retrieve_start).count() << std::endl;
 }
 
-std::vector<std::pair<Id, Data>> generate_data(const size_t &max_size, const size_t &num_objects){
-    std::vector<std::pair<Id, Data>> test_data;
+std::vector<std::pair<Ref, Object>> generate_data(const size_t &max_size, const size_t &num_objects){
+    std::vector<std::pair<Ref, Object>> test_data;
 
     for(size_t i = 0; i < num_objects; i++){
         const size_t data_size = (rand() % (max_size- 1)) + 1;
-        Id random_id(random_key());
-        Data random_data(gen_random_alphanum(data_size));
-        test_data.push_back(std::pair<Id, Data>(random_id, random_data));
+        Ref random_id(random_key());
+        Object random_data(gen_random_alphanum(data_size));
+        test_data.push_back(std::pair<Ref, Object>(random_id, random_data));
     }
 
     return test_data;
 }
 
-void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores, const std::vector<std::pair<Id, Data>> &data, const double &coverage){
+void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores, const std::vector<std::pair<Ref, Object>> &data, const double &coverage){
     std::uniform_real_distribution<> dist(0, 1);
 
     for(const auto &d: data){
@@ -115,7 +115,7 @@ void correctness_test(std::vector<std::pair<std::string,Object_Store *>> stores,
 
     for(auto &s: stores){
         const std::string test_string = "0123456789";
-        const Id test_id(std::string("range_fetch_test_key"));
+        const Ref test_id(std::string("range_fetch_test_key"));
 
         s.second->store(test_id, test_string);
 
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]){
 
     e2 = std::mt19937(rd());
 
-    std::vector<std::pair<Id, Data>> test_data = generate_data(OBJECT_MAX_SIZE, NUM_TEST_OBJECTS);
+    std::vector<std::pair<Ref, Object>> test_data = generate_data(OBJECT_MAX_SIZE, NUM_TEST_OBJECTS);
 
     std::vector<std::pair<std::string, Object_Store *>> stores;
 

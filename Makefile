@@ -43,8 +43,8 @@ types.o: src/types.h src/types.cc
 	${CXX} ${CXXFLAGS} -o types.o -c src/types.cc
 
 clean:
-	objstore
-	test
+	rm -f objstore
+	rm -f test
 	rm -f *.o
 	rm -f *.so
 	rm -f *.a

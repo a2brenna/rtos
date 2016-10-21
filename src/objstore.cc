@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 	po::options_description desc("Options");
 	desc.add_options()
 		("name", po::value<std::string>(&object_name), "Name of object")
-		("data", po::value<std::string>(&data), "Data to store")
+		("data", po::value<std::string>(&data), "Object to store")
 		("fstore", po::value<std::string>(&fstore), "FS_Store location")
 		("depth", po::value<size_t>(&depth), "FS_Store depth")
 		("width", po::value<size_t>(&width), "FS_Store width")
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
 
     FS_Store fs(fstore, depth, width);
 
-    const Id id(object_name);
+    const Ref id(object_name);
 
     if(store || append){
         if(data.size() == 0){
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
                 fs.store(id, data);
             }
             catch(E_OBJECT_EXISTS){
-                std::cerr << "Object named: " << object_name << " already exists in Database: " << fstore << std::endl;
+                std::cerr << "Object named: " << object_name << " already exists in Objectbase: " << fstore << std::endl;
                 return -1;
             }
         }
