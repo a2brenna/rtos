@@ -19,6 +19,7 @@ class Object_Store {
         virtual void fetch_head(const Ref&id, const size_t &num_bytes, char *buf) const = 0;
         virtual void fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) const = 0;
         virtual Object fetch(const Ref&id) const = 0;
+        virtual Object fetch_from(const Ref&id, const size_t &start) const = 0;
         virtual Object fetch(const Ref&id, const size_t &start, const size_t &num_bytes) const = 0;
         virtual void fetch(const Ref&id, const size_t &start, const size_t &num_bytes, char *buf) const = 0;
 

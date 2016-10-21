@@ -135,9 +135,13 @@ void FS_Store::append(const Ref&id, const char *data, const size_t &size){
     //TODO: check for errors?
 }
 
-Object FS_Store::fetch(const Ref&id) const{
+Object FS_Store::fetch(const Ref &id) const{
+    return fetch_from(id, 0);
+}
+
+Object FS_Store::fetch_from(const Ref &id, const size_t &start) const{
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    _log << now << " FETCH_ALL " << id.base16() << std::endl;
+    _log << now << " FETCH_FROM " << id.base16() << " " << start << std::endl;
 
     std::ifstream f;
     f.open(_find(id), std::ios::in);
@@ -149,12 +153,13 @@ Object FS_Store::fetch(const Ref&id) const{
     else{
         f.seekg(0, std::ios::end);
         assert(f);
-        size_t file_size = f.tellg();
+        const size_t file_size = f.tellg();
+        assert(file_size > start);
 
         std::string s;
-        s.resize(file_size);
+        s.resize(file_size - start);
 
-        f.seekg(0);
+        f.seekg(start);
         f.read(&s[0], file_size);
         assert(f);
 
