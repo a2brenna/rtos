@@ -6,7 +6,7 @@ PREFIX=/usr
 CXX=g++
 CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
-all: test objstore librtosfs.so
+all: rtosd test objstore librtosfs.so
 
 install: all
 	mkdir -p ${DESTDIR}/${PREFIX}/lib
@@ -20,6 +20,9 @@ install: all
 
 test: src/test.cc ephemeral_store.o fs_store.o types.o encode.o
 	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o fs_store.o types.o encode.o -lboost_program_options -lsodium
+
+rtosd: src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o
+	${CXX} ${CXXFLAGS} -o rtosd src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o -lboost_program_options -lsodium -lsmplsocket -lpthread -lprotobuf
 
 objstore: src/objstore.cc fs_store.o types.o encode.o
 	${CXX} ${CXXFLAGS} -o objstore src/objstore.cc fs_store.o types.o encode.o -lboost_program_options -lsodium
@@ -41,6 +44,12 @@ librtosfs.so: fs_store.o types.o encode.o ref_log.o
 
 types.o: src/types.h src/types.cc
 	${CXX} ${CXXFLAGS} -o types.o -c src/types.cc
+
+wire_protocol.o: src/wire_protocol.pb.h
+	${CXX} ${CXXFLAGS} -c src/wire_protocol.pb.cc -o wire_protocol.o
+
+src/wire_protocol.pb.h: wire_protocol.proto
+	protoc --cpp_out=src/ wire_protocol.proto
 
 clean:
 	rm -f objstore

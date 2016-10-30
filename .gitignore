@@ -2,7 +2,10 @@
 *.o
 *.a
 *.o
+src/*.pb.h
+src/*.pb.cc
 test
 objstore
+rtosd
 example.*
 example_*
