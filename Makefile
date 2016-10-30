@@ -6,7 +6,7 @@ PREFIX=/usr
 CXX=g++
 CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
-all: rtosd test objstore librtosfs.so
+all: rtos rtosd test librtosfs.so
 
 install: all
 	mkdir -p ${DESTDIR}/${PREFIX}/lib
@@ -24,14 +24,17 @@ test: src/test.cc ephemeral_store.o fs_store.o types.o encode.o
 rtosd: src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o
 	${CXX} ${CXXFLAGS} -o rtosd src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o -lboost_program_options -lsodium -lsmplsocket -lpthread -lprotobuf
 
-objstore: src/objstore.cc fs_store.o types.o encode.o
-	${CXX} ${CXXFLAGS} -o objstore src/objstore.cc fs_store.o types.o encode.o -lboost_program_options -lsodium
+rtos: src/rtos.cc fs_store.o types.o encode.o remote_store.o wire_protocol.o
+	${CXX} ${CXXFLAGS} -o rtos src/rtos.cc fs_store.o types.o encode.o remote_store.o wire_protocol.o -lboost_program_options -lsodium -lsmplsocket -lprotobuf
 
 ephemeral_store.o: src/ephemeral_store.h src/ephemeral_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o ephemeral_store.o -c src/ephemeral_store.cc
 
 fs_store.o: src/fs_store.h src/fs_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o fs_store.o -c src/fs_store.cc
+
+remote_store.o: src/remote_store.h src/remote_store.cc src/types.h
+	${CXX} ${CXXFLAGS} -o remote_store.o -c src/remote_store.cc
 
 encode.o: src/encode.h src/encode.cc
 	${CXX} ${CXXFLAGS} -o encode.o -c src/encode.cc
@@ -52,7 +55,6 @@ src/wire_protocol.pb.h: wire_protocol.proto
 	protoc --cpp_out=src/ wire_protocol.proto
 
 clean:
-	rm -f objstore
 	rm -f test
 	rm -f *.o
 	rm -f *.so

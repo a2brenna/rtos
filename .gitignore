@@ -6,6 +6,7 @@ src/*.pb.h
 src/*.pb.cc
 test
 objstore
+rtos
 rtosd
 example.*
 example_*
