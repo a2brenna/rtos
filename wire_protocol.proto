@@ -14,13 +14,10 @@ message Append {
 }
 
 message Fetch {
-	Bounds from_start = 1;
-	Bounds from_end = 2;
-}
-
-message Bounds {
-	uint64 low = 1;
-	uint64 high = 2;
+    uint64 head_num_bytes = 1;
+    uint64 tail_num_bytes = 2;
+    uint64 from = 3;
+    uint64 num_bytes = 4;
 }
 
 message Response {
