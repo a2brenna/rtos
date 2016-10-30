@@ -25,6 +25,7 @@ message Bounds {
 
 message Response {
     Return_Code result = 1;
+    uint64 result_offset = 2;
     enum Return_Code {
         SUCCESS = 0;
         BYTES_TO_FOLLOW = 1;
