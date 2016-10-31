@@ -116,9 +116,15 @@ int main(int argc, char* argv[]){
         ("depth", po::value<size_t>(&DEPTH), "Depth of backend directory tree")
     ;
 
-	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    try{
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+    }
+    catch(...){
+        std::cout << desc << std::endl;
+        return -1;
+    }
 
     if( (DIRECTORY.size() == 0) ||
         (UNIX_DOMAIN_SOCKET.size() == 0) ||
