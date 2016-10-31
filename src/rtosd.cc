@@ -23,14 +23,65 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             std::cout << request.DebugString() << std::endl;
 
             rtos::Response response;
-            std::string object_bytes;
+            std::string return_bytes;
+
+            try{
+                if( request.ref().size() != 32 ){
+
+                    Ref ref(request.ref().c_str(), 32);
+
+                    if(request.has_append()){
+                        if(request.append().offset() > 0){
+                            response.set_result(rtos::Response::FAIL);
+                        }
+                        else{
+                            backend->append(ref, request.append().data());
+                            response.set_result(rtos::Response::SUCCESS);
+                        }
+                    }
+                    else if(request.has_store()){
+                        backend->store(ref, request.store().data());
+                        response.set_result(rtos::Response::SUCCESS);
+                    }
+                    else if(request.has_fetch()){
+                        if(request.fetch().head_num_bytes() > 0){
+                            return_bytes = backend->fetch_head(ref, request.fetch().head_num_bytes()).data();
+                        }
+                        else if(request.fetch().tail_num_bytes() > 0){
+                            return_bytes = backend->fetch_tail(ref, request.fetch().tail_num_bytes()).data();
+                        }
+                        else if(request.fetch().num_bytes() > 0){
+                            return_bytes = backend->fetch(ref, request.fetch().from(), request.fetch().num_bytes()).data();
+                        }
+                        else{
+                            return_bytes = backend->fetch(ref).data();
+                        }
+
+                        if(return_bytes.size() > 0){
+                            response.set_result(rtos::Response::BYTES_TO_FOLLOW);
+                        }
+                        else{
+                            response.set_result(rtos::Response::SUCCESS);
+                        }
+                    }
+                    else{
+                        response.set_result(rtos::Response::FAIL);
+                    }
+                }
+                else{
+                    response.set_result(rtos::Response::FAIL);
+                }
+            }
+            catch(...){
+                //TODO: Fix this
+            }
 
             std::string serialized_response;
             response.SerializeToString(&serialized_response);
             client->send(serialized_response);
             if(response.result() == rtos::Response::BYTES_TO_FOLLOW){
-                assert(object_bytes.size() > 0);
-                client->send(object_bytes);
+                assert(return_bytes.size() > 0);
+                client->send(return_bytes);
             }
         }
         catch(smpl::Transport_Failed t){
