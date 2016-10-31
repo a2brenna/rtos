@@ -2,6 +2,7 @@
 #define __REMOTE_STORE_H__
 
 #include "object_store.h"
+#include "wire_protocol.pb.h"
 #include <memory>
 #include <smpl.h>
 
@@ -26,7 +27,9 @@ class Remote_Store : public Object_Store{
     private:
 
         std::shared_ptr<smpl::Remote_Address> _server_address;
-        std::shared_ptr<smpl::Channel> _server;
+        mutable std::shared_ptr<smpl::Channel> _server;
+
+        rtos::Response _perform(const rtos::Request &request) const;
 
 };
 
