@@ -154,18 +154,17 @@ Object FS_Store::fetch_from(const Ref &id, const size_t &start) const{
         f.seekg(0, std::ios::end);
         assert(f);
         const size_t file_size = f.tellg();
-        if(file_size > start){
+        if(start > file_size){
             throw E_DATA_DNE();
         }
 
         std::string s;
-        s.resize(file_size - start);
+        const size_t result_size = file_size - start;
+        s.resize(result_size);
 
         f.seekg(start);
-        f.read(&s[0], file_size);
-        if(!f){
-            throw E_DATA_DNE();
-        }
+        f.read(&s[0], result_size);
+        assert(f);
 
         return Object(s);
     }
