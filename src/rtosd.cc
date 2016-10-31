@@ -32,7 +32,7 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
 
                     if(request.has_append()){
                         if(request.append().offset() > 0){
-                            response.set_result(rtos::Response::FAIL);
+                            response.set_result(rtos::Response::MALFORMED_REQUEST);
                         }
                         else{
                             backend->append(ref, request.append().data());
@@ -65,15 +65,18 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
                         }
                     }
                     else{
-                        response.set_result(rtos::Response::FAIL);
+                        response.set_result(rtos::Response::MALFORMED_REQUEST);
                     }
                 }
                 else{
-                    response.set_result(rtos::Response::FAIL);
+                    response.set_result(rtos::Response::MALFORMED_REQUEST);
                 }
             }
-            catch(...){
-                //TODO: Fix this
+            catch(E_OBJECT_DNE e){
+                response.set_result(rtos::Response::E_OBJECT_DNE);
+            }
+            catch(E_OBJECT_EXISTS e){
+                response.set_result(rtos::Response::E_OBJECT_EXISTS);
             }
 
             std::string serialized_response;

@@ -31,6 +31,8 @@ message Response {
     enum Return_Code {
         SUCCESS = 0;
         BYTES_TO_FOLLOW = 1;
-        FAIL = 2;
+        MALFORMED_REQUEST = 2;
+        E_OBJECT_EXISTS = 3;
+        E_OBJECT_DNE = 4;
     }
 }
