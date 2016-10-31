@@ -10,3 +10,4 @@ rtos
 rtosd
 example.*
 example_*
+fs_store.fs

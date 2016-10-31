@@ -38,7 +38,12 @@ int main(int argc, char* argv[]){
     }
     po::notify(vm);
 
-    assert(UNIX_DOMAIN_SOCKET.size() > 0);
+    if( (UNIX_DOMAIN_SOCKET.size() == 0) ||
+        ((name.size() == 0) && (ref_16.size() == 0))
+      ){
+        std::cout << desc << std::endl;
+        return -1;
+    }
 
     std::shared_ptr<Object_Store> server(new Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(UNIX_DOMAIN_SOCKET))));
 

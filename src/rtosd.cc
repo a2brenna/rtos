@@ -103,10 +103,10 @@ void handle_local_address(std::shared_ptr<smpl::Local_Address> incoming){
 
 int main(int argc, char* argv[]){
 
-    std::string DIRECTORY = "./fs_store.fs";
-    std::string UNIX_DOMAIN_SOCKET = "./rtos.sock";
-    size_t WIDTH = 1;
-    size_t DEPTH = 5;
+    std::string DIRECTORY;
+    std::string UNIX_DOMAIN_SOCKET;
+    size_t WIDTH;
+    size_t DEPTH;
 
 	po::options_description desc("Options");
 	desc.add_options()
@@ -119,6 +119,15 @@ int main(int argc, char* argv[]){
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
+
+    if( (DIRECTORY.size() == 0) ||
+        (UNIX_DOMAIN_SOCKET.size() == 0) ||
+        (WIDTH == 0) ||
+        (DEPTH == 0)
+      ){
+        std::cout << desc << std::endl;
+        return -1;
+    }
 
     std::shared_ptr<Object_Store> backend(new FS_Store(DIRECTORY, DEPTH, WIDTH));
 
