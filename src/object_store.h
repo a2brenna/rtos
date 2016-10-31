@@ -7,6 +7,8 @@ class E_OBJECT_EXISTS {};
 
 class E_OBJECT_DNE {};
 
+class E_DATA_DNE {};
+
 class Object_Store {
 
     public:

@@ -154,14 +154,18 @@ Object FS_Store::fetch_from(const Ref &id, const size_t &start) const{
         f.seekg(0, std::ios::end);
         assert(f);
         const size_t file_size = f.tellg();
-        assert(file_size > start);
+        if(file_size > start){
+            throw E_DATA_DNE();
+        }
 
         std::string s;
         s.resize(file_size - start);
 
         f.seekg(start);
         f.read(&s[0], file_size);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
 
         return Object(s);
     }
@@ -201,10 +205,14 @@ void FS_Store::fetch(const Ref&id, const size_t &start, const size_t &num_bytes,
     }
     else{
         f.seekg(start, std::ios::beg);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
 
         f.read(buf, num_bytes);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
     }
 }
 
@@ -221,7 +229,9 @@ void FS_Store::fetch_head(const Ref&id, const size_t &num_bytes, char *buf) cons
     }
     else{
         f.read(buf, num_bytes);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
     }
 }
 
@@ -238,8 +248,12 @@ void FS_Store::fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) cons
     }
     else{
         f.seekg(-(ssize_t)num_bytes, std::ios::end);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
         f.read(buf, num_bytes);
-        assert(f);
+        if(!f){
+            throw E_DATA_DNE();
+        }
     }
 }
