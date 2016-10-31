@@ -27,3 +27,11 @@ fast as possible, but fallback to creating full copies.
 Evolve/Mutate: Pending
     Exploit Server Side Copy implementation to allow a client to atomically copy
 an Object and then perform a mutation before returning.
+
+Automatic Width/Depth Detection: Pending
+    Given a directory and no Depth/Width parameters, daemon should explore
+directory tree at start time to discover its depth and width.
+
+Per Object Journal: Investigate
+    Investigate having a per object journal. Might allow for point in time
+recovery of arbitrary objects.
