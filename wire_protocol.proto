@@ -5,7 +5,12 @@ package rtos;
 message Request {
     bytes ref = 1;
     Append append = 2;
-    Fetch fetch = 3;
+    Store store = 3;
+    Fetch fetch = 4;
+}
+
+message Store {
+    bytes data = 1;
 }
 
 message Append {
