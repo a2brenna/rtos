@@ -34,5 +34,6 @@ message Response {
         MALFORMED_REQUEST = 2;
         E_OBJECT_EXISTS = 3;
         E_OBJECT_DNE = 4;
+        E_DATA_DNE = 5;
     }
 }
