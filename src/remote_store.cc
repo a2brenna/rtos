@@ -50,9 +50,8 @@ rtos::Response Remote_Store::_perform(const rtos::Request &request) const{
 void Remote_Store::store(const Ref&id, const Object &data){
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
-    rtos::Append *append = request.mutable_append();
-    append->set_data(data.data());
-    append->set_offset(0);
+    rtos::Store *store = request.mutable_store();
+    store->set_data(data.data());
     const auto response = _perform(request);
     return;
 }
