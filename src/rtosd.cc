@@ -20,7 +20,6 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             const std::string serialized_request = client->recv();
             rtos::Request request;
             request.ParseFromString(serialized_request);
-            std::cout << request.DebugString() << std::endl;
 
             rtos::Response response;
             std::string return_bytes;
