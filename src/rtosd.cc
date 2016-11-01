@@ -78,6 +78,9 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             catch(E_OBJECT_EXISTS e){
                 response.set_result(rtos::Response::E_OBJECT_EXISTS);
             }
+            catch(E_DATA_DNE e){
+                response.set_result(rtos::Response::E_DATA_DNE);
+            }
 
             std::string serialized_response;
             response.SerializeToString(&serialized_response);
