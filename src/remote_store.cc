@@ -76,6 +76,8 @@ Object Remote_Store::fetch(const Ref &id) const{
 Object Remote_Store::fetch_from(const Ref &id, const size_t &start) const{
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
+    rtos::Fetch *fetch = request.mutable_fetch();
+    fetch->set_from(start);
     const auto response = _perform(request);
     std::string obj_data = _server->recv();
     return Object(obj_data);
@@ -105,6 +107,9 @@ Object Remote_Store::fetch_tail(const Ref&id, const size_t &num_bytes) const{
 void Remote_Store::fetch(const Ref&id, const size_t &start, const size_t &num_bytes, char *buf) const{
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
+    rtos::Fetch *fetch = request.mutable_fetch();
+    fetch->set_from(start);
+    fetch->set_num_bytes(num_bytes);
     const auto response = _perform(request);
     const size_t recved = _server->recv(buf, num_bytes);
     assert(recved == num_bytes);
@@ -114,6 +119,8 @@ void Remote_Store::fetch(const Ref&id, const size_t &start, const size_t &num_by
 void Remote_Store::fetch_head(const Ref&id, const size_t &num_bytes, char *buf) const{
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
+    rtos::Fetch *fetch = request.mutable_fetch();
+    fetch->set_head_num_bytes(num_bytes);
     const auto response = _perform(request);
     const size_t recved = _server->recv(buf, num_bytes);
     assert(recved == num_bytes);
@@ -123,6 +130,8 @@ void Remote_Store::fetch_head(const Ref&id, const size_t &num_bytes, char *buf) 
 void Remote_Store::fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) const{
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
+    rtos::Fetch *fetch = request.mutable_fetch();
+    fetch->set_tail_num_bytes(num_bytes);
     const auto response = _perform(request);
     const size_t recved = _server->recv(buf, num_bytes);
     assert(recved == num_bytes);
