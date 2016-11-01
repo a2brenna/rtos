@@ -135,7 +135,7 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
-    std::shared_ptr<Object_Store> backend(new FS_Store(DIRECTORY, DEPTH, WIDTH));
+    backend = std::shared_ptr<Object_Store>(new FS_Store(DIRECTORY, DEPTH, WIDTH));
 
     std::shared_ptr<smpl::Local_Address> unix_domain_socket(new smpl::Local_UDS(UNIX_DOMAIN_SOCKET));
     auto unix_domain_handler = std::thread(std::bind(handle_local_address, unix_domain_socket));
