@@ -26,7 +26,7 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             std::string return_bytes;
 
             try{
-                if( request.ref().size() != 32 ){
+                if( request.ref().size() == 32 ){
 
                     Ref ref(request.ref().c_str(), 32);
 
