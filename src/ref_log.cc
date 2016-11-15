@@ -7,7 +7,12 @@ struct Timed_Reference {
     char id[32];
 };
 
-Ref_Log::Ref_Log(const Ref&id, std::shared_ptr<Object_Store> backend){
+/*
+Ref_Log::Ref_Log(){
+}
+*/
+
+Ref_Log::Ref_Log(const Ref&id, const std::shared_ptr<Object_Store> &backend){
     _id = id;
     _backend = backend;
 }
