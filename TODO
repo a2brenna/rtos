@@ -1,4 +1,4 @@
-script to run perf ./test for different backends
+Add proper config file reading and option parsing
 Add correctness mode that runs different backends against each other
     Add tests for append correctness
 Investigate maintaining a set of deleted keys by using a wide bloom/cuckoo filter

@@ -25,9 +25,6 @@ rtos::Response _perform(const rtos::Request &request, std::shared_ptr<smpl::Chan
     if(response.result() == rtos::Response::MALFORMED_REQUEST){
         assert(false);
     }
-    else if(response.result() == rtos::Response::SUCCESS){
-        assert(request.has_append() || request.has_store());
-    }
     else if(response.result() == rtos::Response::BYTES_TO_FOLLOW){
         assert(request.has_fetch());
     }
@@ -79,7 +76,10 @@ Object Remote_Store::fetch_from(const Ref &id, const size_t &start) const{
     rtos::Fetch *fetch = request.mutable_fetch();
     fetch->set_from(start);
     const auto response = _perform(request, _server);
-    std::string obj_data = _server->recv();
+    std::string obj_data;
+    if(response.result() == rtos::Response::BYTES_TO_FOLLOW){
+        obj_data = _server->recv();
+    }
     return Object(obj_data);
 }
 
