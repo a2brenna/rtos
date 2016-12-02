@@ -27,7 +27,7 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             try{
                 if( request.ref().size() == 32 ){
 
-                    Ref ref(request.ref().c_str(), 32);
+                    const Ref ref(request.ref().c_str(), 32);
 
                     if(request.has_append()){
                         if(request.append().offset() > 0){
