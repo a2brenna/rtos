@@ -4,7 +4,7 @@ DESDTIR=/
 PREFIX=/usr
 
 CXX=g++
-CXXFLAGS=-L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
+CXXFLAGS=-D_FILE_OFFSET_BITS=64 -L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
 all: rtos rtosd test librtosfs.so librrtos.so
 
