@@ -37,6 +37,8 @@ rtos::Response _perform(const rtos::Request &request, std::shared_ptr<smpl::Chan
     else if(response.result() == rtos::Response::E_DATA_DNE){
         throw E_DATA_DNE();
     }
+    else if(response.result() == rtos::Response::SUCCESS){
+    }
     else{
         assert(false);
     }
