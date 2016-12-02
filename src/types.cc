@@ -15,7 +15,7 @@ Ref::Ref(const std::string &id){
 
 Ref::Ref(const char *buf, const size_t &len){
     assert(len == 32);
-    strncpy((char *)_id, buf, 32);
+    memcpy(_id, buf, 32);
 }
 
 std::string Ref::base16() const{
