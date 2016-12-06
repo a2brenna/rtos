@@ -47,6 +47,7 @@ rtos::Response _perform(const rtos::Request &request, std::shared_ptr<smpl::Chan
 }
 
 void Remote_Store::store(const Ref&id, const Object &data){
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Store *store = request.mutable_store();
@@ -60,6 +61,7 @@ void Remote_Store::append(const Ref&id, const Object &data){
 }
 
 void Remote_Store::append(const Ref&id, const char *data, const size_t &size){
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Append *append = request.mutable_append();
@@ -73,6 +75,7 @@ Object Remote_Store::fetch(const Ref &id) const{
 }
 
 Object Remote_Store::fetch_from(const Ref &id, const size_t &start) const{
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Fetch *fetch = request.mutable_fetch();
@@ -107,6 +110,7 @@ Object Remote_Store::fetch_tail(const Ref&id, const size_t &num_bytes) const{
 }
 
 void Remote_Store::fetch(const Ref&id, const size_t &start, const size_t &num_bytes, char *buf) const{
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Fetch *fetch = request.mutable_fetch();
@@ -119,6 +123,7 @@ void Remote_Store::fetch(const Ref&id, const size_t &start, const size_t &num_by
 }
 
 void Remote_Store::fetch_head(const Ref&id, const size_t &num_bytes, char *buf) const{
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Fetch *fetch = request.mutable_fetch();
@@ -130,6 +135,7 @@ void Remote_Store::fetch_head(const Ref&id, const size_t &num_bytes, char *buf) 
 }
 
 void Remote_Store::fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) const{
+    std::unique_lock<std::mutex> l(_lock);
     rtos::Request request;
     request.set_ref(std::string(id.buf(), 32));
     rtos::Fetch *fetch = request.mutable_fetch();

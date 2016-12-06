@@ -4,6 +4,7 @@
 #include "object_store.h"
 #include <memory>
 #include <smpl.h>
+#include <mutex>
 
 class Remote_Store : public Object_Store{
 
@@ -24,6 +25,7 @@ class Remote_Store : public Object_Store{
         Remote_Store(std::shared_ptr<smpl::Remote_Address> server_address);
 
     private:
+        mutable std::mutex _lock;
 
         std::shared_ptr<smpl::Remote_Address> _server_address;
         mutable std::shared_ptr<smpl::Channel> _server;
