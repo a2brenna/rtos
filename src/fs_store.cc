@@ -14,8 +14,8 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     _depth = depth;
     _width = width;
 
-    _log.open(_path + "/log", std::ifstream::app);
-    assert(_log);
+    //_log.open(_path + "/log", std::ifstream::app);
+    //assert(_log);
 }
 
 //TODO: Collapse this by using some technology
@@ -25,6 +25,7 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
     _width = width;
 
     //replay log
+    /*
     std::ifstream l;
     l.open(log_path);
     assert(l);
@@ -33,11 +34,14 @@ FS_Store::FS_Store(const std::string &path, const size_t &depth, const size_t &w
 
     _log.open(_path + "/log", std::ifstream::app);
     assert(_log);
+    */
 }
 
 FS_Store::~FS_Store(){
+    /*
     _log.close();
     assert(_log);
+    */
 }
 
 void FS_Store::_replay_log(std::ifstream &log_file){
@@ -94,7 +98,7 @@ std::string FS_Store::_find(const Ref&id) const{
 void FS_Store::store(const Ref&id, const Object &data){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " STORE " << id.base16() << " " << base64_encode(data.data()) << std::endl;
-    assert(_log);
+    //assert(_log);
     const std::string p = _find(id);
     struct stat s;
     const auto r = stat( p.c_str(), &s); //TODO: investigate other return codes
@@ -122,7 +126,7 @@ void FS_Store::append(const Ref&id, const Object &data){
 void FS_Store::append(const Ref&id, const char *data, const size_t &size){
     const auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     _log << now << " APPEND " << id.base16() << " " << base64_encode((const unsigned char*)data, size) << std::endl;
-    assert(_log);
+    //assert(_log);
     std::ofstream f;
     f.open(_find(id), std::ios::app);
     assert(f);
