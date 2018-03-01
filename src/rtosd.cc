@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <boost/program_options.hpp>
-#include <rtos/fs_store.h>
+#include "fs_store.h"
 #include <cassert>
 #include <memory>
 #include <thread>
