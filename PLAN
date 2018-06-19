@@ -1,3 +1,12 @@
+Logging: Pending
+    Log all incoming traffic in order *before* servicing requests.  Expensive
+way to provide journalling, complete point in time restore and debug
+information. Timestamp and roll logs.
+
+Fixed Width Protocol: Pending
+    Use a hand rolled fixed width versioned protocol for performance reasons.
+Should be able to mostly avoid runtime memory allocation / freeing.
+
 Wire Protocol: Pending
     Capnproto based wire protocol for accessing remote Object Store that exposes
 a superset of reference implementation (FS_Store).  Allows drop in replacement
