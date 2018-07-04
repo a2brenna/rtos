@@ -3,11 +3,13 @@
 
 #include "types.h"
 
-class E_OBJECT_EXISTS {};
+class E_OBJECT_DNE {}; //anything where an id lookup fails
 
-class E_OBJECT_DNE {};
+class E_OBJECT_EXISTS {}; //mutate, if target exists
 
-class E_DATA_DNE {};
+class E_DATA_EXISTS {}; //append, if data already exists
+
+class E_DATA_DNE {}; //read, if data doesn't exist (i.e. bounds check fail)
 
 struct Stats {
     size_t size;
@@ -17,6 +19,7 @@ class Object_Store {
 
     public:
 
+        /*
         virtual void create(const Ref &read_id, const Ref &write_id, const Ref &rm_id) = 0;
         virtual void remove(const Ref &rm_id) = 0;
 
@@ -26,6 +29,7 @@ class Object_Store {
 
         virtual Object read(const Ref &read_id, const int64_t &index, const size_t &num_bytes) const = 0;
         virtual Stats stat(const Ref &read_id) = 0;
+        */
 
 };
 #endif

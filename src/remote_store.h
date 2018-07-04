@@ -10,25 +10,24 @@ class Remote_Store : public Object_Store{
 
     public:
 
-		void store(const Ref&id, const Object &data);
-        void append(const Ref&id, const Object &data);
-        void append(const Ref&id, const char *data, const size_t &size);
-        Object fetch(const Ref&id) const;
-        Object fetch_from(const Ref&id, const size_t &start) const;
-        Object fetch(const Ref&id, const size_t &start, const size_t &num_bytes) const;
-        Object fetch_head(const Ref&id, const size_t &num_bytes) const;
-        Object fetch_tail(const Ref&id, const size_t &num_bytes) const;
-        void fetch(const Ref&id, const size_t &start, const size_t &num_bytes, char *buf) const;
-        void fetch_head(const Ref&id, const size_t &num_bytes, char *buf) const;
-        void fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) const;
+        /*
+        void create(const Ref &read_id, const Ref &write_id, const Ref &rm_id);
+        void remove(const Ref &rm_id);
+
+        void append(const Ref &write_id, const Ref &read_id, const uint64_t &index, const Object &data);
+        void append(const Ref &write_id, const Object &data);
+        void mutate(const Ref &target_read_id, const Ref &target_write_id, const Ref &target_rm_id, const Ref &source_read_id, const int64_t &index, const Object &data);
+
+        Object read(const Ref &read_id, const int64_t &index, const size_t &num_bytes) const;
+        Stats stat(const Ref &read_id);
+        */
 
         Remote_Store(std::shared_ptr<smpl::Remote_Address> server_address);
 
     private:
-        mutable std::mutex _lock;
 
         std::shared_ptr<smpl::Remote_Address> _server_address;
-        mutable std::shared_ptr<smpl::Channel> _server;
+        std::shared_ptr<smpl::Channel> _server;
 
 };
 

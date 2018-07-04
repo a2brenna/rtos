@@ -12,34 +12,45 @@
 
 namespace po = boost::program_options;
 
-std::string UNIX_DOMAIN_SOCKET;
-
 int main(int argc, char* argv[]){
 
-    std::string name;
-    std::string ref_16;
-    std::string append_data;
-    std::string store_data;
-    bool append_stdin = false;
-    bool store_stdin = false;
-    size_t tail = 0;
-    size_t head = 0;
-    size_t from = 0;
-    size_t num_bytes = 0;
+    std::string read_ref;
+    std::string write_ref;
+    std::string delete_ref;
+    std::string source_ref;
+
+    bool create = false;
+    bool del = false;
+    bool append = false;
+    bool mutate = false;
+    bool read = false;
+    bool stat = false;
+
+    bool hash_ids = false;
+
+    std::string bytes;
+    int64_t index;
+    size_t num_bytes;
+
+    std::string address;
 
 	po::options_description desc("Options");
 	desc.add_options()
-        ("uds", po::value<std::string>(&UNIX_DOMAIN_SOCKET), "Server Unix Domain Socket")
-        ("name", po::value<std::string>(&name), "Object name to be hashed to reference")
-        ("ref16", po::value<std::string>(&ref_16), "Base16 encoded 256 bit reference")
-        ("append", po::value<std::string>(&append_data), "Data to append")
-        ("store", po::value<std::string>(&store_data), "Data to store")
-        ("append-stdin", po::bool_switch(&append_stdin), "Append from stdin")
-        ("store-stdin", po::bool_switch(&store_stdin), "Store from stdin")
-        ("tail", po::value<size_t>(&tail), "Number of bytes to fetch from tail")
-        ("head", po::value<size_t>(&head), "Number of bytes to fetch from head")
-        ("from", po::value<size_t>(&from), "Offset at which to begin fetch")
-        ("num_bytes", po::value<size_t>(&num_bytes), "Number of bytes to fetch")
+        ("read_ref,r", po::value<std::string>(&read_ref), "Read reference")
+        ("write_ref,w", po::value<std::string>(&write_ref), "Write reference")
+        ("delete_ref,d", po::value<std::string>(&delete_ref), "Delete reference")
+        ("source_ref,s", po::value<std::string>(&source_ref), "Source reference")
+        ("bytes,b", po::value<std::string>(&bytes), "Bytes to append/mutate")
+        ("index,i", po::value<int64_t>(&index), "Index within target object")
+        ("num_bytes,n", po::value<size_t>(&num_bytes), "Number of bytes to retrieve")
+        ("hash_ids,h", po::bool_switch(&hash_ids), "SHA256 hash ids to get 256 bit references/keys")
+        ("create,C", po::bool_switch(&create), "Create an object")
+        ("delete,D", po::bool_switch(&del), "Delete an object")
+        ("append,A", po::bool_switch(&append), "Append bytes to an object")
+        ("mutate,M", po::bool_switch(&mutate), "Create a new object by mutating the bytes of an existing object")
+        ("read,R", po::bool_switch(&read), "Read bytes from an object")
+        ("stat,S", po::bool_switch(&stat), "Retrieve object meta-data")
+        ("address,a", po::value<std::string>(&address), "Address of object store [hostname/ip:port | unix domain socket]")
     ;
 
 	po::variables_map vm;
@@ -53,79 +64,32 @@ int main(int argc, char* argv[]){
     }
     po::notify(vm);
 
-    if( (UNIX_DOMAIN_SOCKET.size() == 0) ||
-        ((name.size() == 0) && (ref_16.size() == 0))
-      ){
+    const std::function<Remote_Store(const std::string &address)> server = [](const std::string &address){
+        return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(address)));
+    };
+
+    if(create && !(del || append || mutate || read || stat)){
+
+    }
+    else if(del && !(create || append || mutate || read || stat)){
+
+    }
+    else if(append && !(create || del || mutate || read || stat)){
+
+    }
+    else if(mutate && !(create || del || append || read || stat)){
+
+    }
+    else if(read && !(create || del || append || mutate || stat)){
+
+    }
+    else if(stat && !(create || del || append || mutate || read)){
+
+    }
+    else{
+        std::cout << "Specify a single operation: -CDAMNRS" << std::endl;
         std::cout << desc << std::endl;
         return -1;
-    }
-
-    Ref id;
-    if(name.size() > 0){
-        id = Ref(name);
-    }
-    else if(ref_16.size() > 0){
-        const std::string raw_ref = base16_decode(ref_16);
-        if(raw_ref.size() == 32){
-            id = Ref(raw_ref.c_str(), 32);
-        }
-        else{
-            std::cout << desc << std::endl;
-            return -1;
-        }
-    }
-
-    std::shared_ptr<Object_Store> server(new Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(UNIX_DOMAIN_SOCKET))));
-
-    try{
-        if(append_data.size() > 0){
-            server->append(id, append_data);
-        }
-        else if(store_data.size() > 0){
-            server->store(id, store_data);
-        }
-        else if(append_stdin){
-            std::string input;
-            while(std::cin >> input){
-                server->append(id,input);
-            }
-        }
-        else if(store_stdin){
-            std::string input;
-            std::cin >> input;
-            server->store(id, input);
-            while(std::cin >> input){
-                server->append(id,input);
-            }
-        }
-        else if(tail > 0){
-            std::cout << server->fetch_tail(id, tail).data();
-        }
-        else if(head > 0){
-            std::cout << server->fetch_head(id, head).data();
-        }
-        else if( num_bytes > 0 ){
-            std::cout << server->fetch(id, from, num_bytes).data();
-        }
-        else{
-            std::cout << server->fetch(id).data();
-        }
-    }
-    catch(E_OBJECT_EXISTS e){
-        std::cerr << "Object Already Exists" << std::endl;
-        return 1;
-    }
-    catch(E_OBJECT_DNE e){
-        std::cerr << "Object Does Not Exist" << std::endl;
-        return 1;
-    }
-    catch(E_DATA_DNE e){
-        std::cerr << "Data Does Not Exist" << std::endl;
-        return 1;
-    }
-    catch(...){
-        std::cerr << "Unknown Error" << std::endl;
-        return 1;
     }
 
     return 0;

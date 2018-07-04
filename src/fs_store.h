@@ -4,36 +4,36 @@
 #include "object_store.h"
 #include <fstream>
 
+enum REF_TYPE {
+    READ,
+    WRITE,
+    RM
+};
+
 class FS_Store : public Object_Store{
 
     public:
 
-		void store(const Ref&id, const Object &data);
-        void append(const Ref&id, const Object &data);
-        void append(const Ref&id, const char *data, const size_t &size);
-        Object fetch(const Ref&id) const;
-        Object fetch_from(const Ref&id, const size_t &start) const;
-        Object fetch(const Ref&id, const size_t &start, const size_t &num_bytes) const;
-        Object fetch_head(const Ref&id, const size_t &num_bytes) const;
-        Object fetch_tail(const Ref&id, const size_t &num_bytes) const;
-        void fetch(const Ref&id, const size_t &start, const size_t &num_bytes, char *buf) const;
-        void fetch_head(const Ref&id, const size_t &num_bytes, char *buf) const;
-        void fetch_tail(const Ref&id, const size_t &num_bytes, char *buf) const;
+        /*
+        void create(const Ref &read_id, const Ref &write_id, const Ref &rm_id);
+        void remove(const Ref &rm_id);
 
-        FS_Store(const std::string &path, const size_t &depth, const size_t &width);
-        FS_Store(const std::string &path, const size_t &depth, const size_t &width, const std::string &log_file);
+        void append(const Ref &write_id, const Ref &read_id, const uint64_t &index, const Object &data);
+        void append(const Ref &write_id, const Object &data);
+        void mutate(const Ref &target_read_id, const Ref &target_write_id, const Ref &target_rm_id, const Ref &source_read_id, const int64_t &index, const Object &data);
+
+        Object read(const Ref &read_id, const int64_t &index, const size_t &num_bytes) const;
+        Stats stat(const Ref &read_id);
+
+        */
+
+        FS_Store(const std::string &path);
         ~FS_Store();
 
     private:
 
         std::string _path;
-        size_t _depth;
-        size_t _width;
-
-        mutable std::ofstream _log;
-
-        std::string _find(const Ref&id) const;
-        void _replay_log(std::ifstream &log_file);
+        int _find_link(const enum REF_TYPE, const Ref &id) const;
 
 };
 

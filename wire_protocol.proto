@@ -3,37 +3,53 @@ syntax = "proto3";
 package rtos;
 
 message Request {
-    bytes ref = 1;
+    Create create = 1;
     Append append = 2;
-    Store store = 3;
-    Fetch fetch = 4;
+    Mutate mutate = 3;
+    Read read = 4;
+    Stat stat = 5;
 }
 
-message Store {
-    bytes data = 1;
+message Create {
+    bytes read_id = 1;
+    bytes write_id = 2;
+    bytes rm_id = 3;
 }
 
 message Append {
-    bytes data = 1;
-	uint64 offset = 2;
+    bytes write_id = 1;
+    bytes read_id = 2;
+    uint64 index = 3;
+    bytes data = 4;
 }
 
-message Fetch {
-    uint64 head_num_bytes = 1;
-    uint64 tail_num_bytes = 2;
-    uint64 from = 3;
-    uint64 num_bytes = 4;
+message Mutate {
+    bytes target_read_id = 1;
+    bytes target_write_id = 2;
+    bytes target_rm_id = 3;
+    bytes source_read_id = 4;
+    int64 index = 5;
+    bytes data = 6;
+}
+
+message Read {
+    bytes read_id = 1;
+    int64 index = 2;
+    uint64 num_bytes = 3;
+}
+
+message Stat {
+    bytes read_id = 1;
 }
 
 message Response {
-    Return_Code result = 1;
-    uint64 result_offset = 2;
     enum Return_Code {
         SUCCESS = 0;
-        BYTES_TO_FOLLOW = 1;
-        MALFORMED_REQUEST = 2;
-        E_OBJECT_EXISTS = 3;
-        E_OBJECT_DNE = 4;
-        E_DATA_DNE = 5;
+        E_OBJECT_EXISTS = 1;
+        E_OBJECT_DNE = 2;
+        E_DATA_EXISTS = 3;
+        E_DATA_DNE = 4;
     }
+    Return_Code result = 1;
+    bytes data = 2;
 }

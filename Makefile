@@ -6,7 +6,7 @@ PREFIX=/usr
 CXX=g++
 CXXFLAGS=-D_FILE_OFFSET_BITS=64 -L${LIBRARY_DIR} -I${INCLUDE_DIR} -O2 -g -std=c++14 -fPIC -Wall -Wextra -march=native
 
-all: rtos rtosd test librtosfs.so librrtos.so
+all: rtos rtosd librtosfs.so librrtos.so
 
 install: all
 	mkdir -p ${DESTDIR}/${PREFIX}/lib
@@ -17,11 +17,7 @@ install: all
 	install -m 444 src/types.h ${DESTDIR}/${PREFIX}/include/rtos/
 	install -m 444 src/fs_store.h ${DESTDIR}/${PREFIX}/include/rtos/
 	install -m 444 src/encode.h ${DESTDIR}/${PREFIX}/include/rtos/
-	install -m 444 src/ref_log.h ${DESTDIR}/${PREFIX}/include/rtos/
 	install -m 444 src/remote_store.h ${DESTDIR}/${PREFIX}/include/rtos/
-
-test: src/test.cc ephemeral_store.o fs_store.o types.o encode.o
-	${CXX} ${CXXFLAGS} -o test src/test.cc ephemeral_store.o fs_store.o types.o encode.o -lboost_program_options -lsodium
 
 rtosd: src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o
 	${CXX} ${CXXFLAGS} -o rtosd src/rtosd.cc fs_store.o types.o encode.o wire_protocol.o -lboost_program_options -lsodium -lsmplsocket -lpthread -lprotobuf
@@ -41,14 +37,11 @@ remote_store.o: src/remote_store.h src/remote_store.cc src/types.h
 encode.o: src/encode.h src/encode.cc
 	${CXX} ${CXXFLAGS} -o encode.o -c src/encode.cc
 
-ref_log.o: src/ref_log.h src/ref_log.cc
-	${CXX} ${CXXFLAGS} -o ref_log.o -c src/ref_log.cc
+librtosfs.so: fs_store.o types.o encode.o
+	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librtosfs.so -o librtosfs.so fs_store.o types.o encode.o
 
-librtosfs.so: fs_store.o types.o encode.o ref_log.o
-	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librtosfs.so -o librtosfs.so fs_store.o types.o encode.o ref_log.o
-
-librrtos.so: remote_store.o types.o encode.o ref_log.o wire_protocol.o
-	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librrtos.so -o librrtos.so remote_store.o types.o encode.o ref_log.o wire_protocol.o
+librrtos.so: remote_store.o types.o encode.o wire_protocol.o
+	${CXX} ${CXXFLAGS} -shared -Wl,-soname,librrtos.so -o librrtos.so remote_store.o types.o encode.o wire_protocol.o
 
 types.o: src/types.h src/types.cc
 	${CXX} ${CXXFLAGS} -o types.o -c src/types.cc
@@ -60,7 +53,6 @@ src/wire_protocol.pb.h: wire_protocol.proto
 	protoc --cpp_out=src/ wire_protocol.proto
 
 clean:
-	rm -f test
 	rm -f *.o
 	rm -f *.so
 	rm -f *.a
