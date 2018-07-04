@@ -34,6 +34,9 @@ rtos::Response perform_request(const rtos::Request &request, std::shared_ptr<smp
     else if(response.result() == rtos::Response::E_DATA_DNE){
         throw E_DATA_DNE();
     }
+    else if(response.result() == rtos::Response::E_UNKNOWN){
+        throw E_UNKNOWN();
+    }
     else{
         return response;
     }

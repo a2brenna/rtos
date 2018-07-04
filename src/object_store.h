@@ -11,6 +11,8 @@ class E_DATA_EXISTS {}; //append, if data already exists
 
 class E_DATA_DNE {}; //read, if data doesn't exist (i.e. bounds check fail)
 
+class E_UNKNOWN {}; //unknown error, used for unsupported operation
+
 struct Stats {
     size_t size;
 };

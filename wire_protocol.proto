@@ -49,6 +49,7 @@ message Response {
         E_OBJECT_DNE = 2;
         E_DATA_EXISTS = 3;
         E_DATA_DNE = 4;
+        E_UNKNOWN = 5;
     }
     Return_Code result = 1;
     bytes data = 2;
