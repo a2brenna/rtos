@@ -10,8 +10,8 @@ class Remote_Store : public Object_Store{
 
     public:
 
-        /*
         void create(const Ref &read_id, const Ref &write_id, const Ref &rm_id);
+        /*
         void remove(const Ref &rm_id);
 
         void append(const Ref &write_id, const Ref &read_id, const uint64_t &index, const Object &data);

@@ -2,11 +2,9 @@
 #include <string>
 #include <boost/program_options.hpp>
 #include <cassert>
-#include <memory>
-#include <thread>
 #include <smplsocket.h>
 
-#include "object_store.h"
+#include "wire_protocol.pb.h"
 #include "remote_store.h"
 #include "encode.h"
 
@@ -64,12 +62,18 @@ int main(int argc, char* argv[]){
     }
     po::notify(vm);
 
-    const std::function<Remote_Store(const std::string &address)> server = [](const std::string &address){
+    const std::function<Remote_Store()> server = [address](){
         return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(address)));
     };
 
     if(create && !(del || append || mutate || read || stat)){
-
+        try{
+            server().create(read_ref, write_ref, delete_ref);
+        }
+        catch(E_OBJECT_EXISTS e){
+            std::cout << "Error: Object Exists" << std::endl;
+            return -2;
+        }
     }
     else if(del && !(create || append || mutate || read || stat)){
 
