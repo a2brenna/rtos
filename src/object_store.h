@@ -21,7 +21,7 @@ class Object_Store {
 
     public:
 
-        void create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id);
+        virtual void create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id) = 0;
 		/*
         void remove(const D_Ref &rm_id);
 

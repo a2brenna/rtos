@@ -30,6 +30,60 @@ bool operator<(const Ref &lhs, const Ref &rhs){
     return ( strncmp(lhs.buf(), rhs.buf(), 32) <  0 );
 }
 
+R_Ref::R_Ref() :
+    Ref()
+{
+
+}
+
+R_Ref::R_Ref(const std::string &name) :
+    Ref(name)
+{
+
+}
+
+R_Ref::R_Ref(const char *buf, const size_t &num_bytes) :
+    Ref(buf, num_bytes)
+{
+
+}
+
+W_Ref::W_Ref() :
+    Ref()
+{
+
+}
+
+W_Ref::W_Ref(const std::string &name) :
+    Ref(name)
+{
+
+}
+
+W_Ref::W_Ref(const char *buf, const size_t &num_bytes) :
+    Ref(buf, num_bytes)
+{
+
+}
+
+D_Ref::D_Ref() :
+    Ref()
+{
+
+}
+
+D_Ref::D_Ref(const std::string &name) :
+    Ref(name)
+{
+
+}
+
+D_Ref::D_Ref(const char *buf, const size_t &num_bytes) :
+    Ref(buf, num_bytes)
+{
+
+}
+
 Object::Object(){
 }
 

@@ -25,7 +25,18 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
             std::string return_bytes;
 
             try{
+                if(request.has_create()){
+                    const R_Ref read_id(request.create().read_id().c_str(), 32);
+                    const W_Ref write_id(request.create().write_id().c_str(), 32);
+                    const D_Ref rm_id(request.create().rm_id().c_str(), 32);
 
+                    backend->create(read_id, write_id, rm_id);
+
+                    response.set_result(rtos::Response::SUCCESS);
+                }
+                else{
+                    response.set_result(rtos::Response::E_UNKNOWN);
+                }
             }
             catch(E_OBJECT_DNE e){
                 response.set_result(rtos::Response::E_OBJECT_DNE);

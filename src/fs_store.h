@@ -26,9 +26,9 @@ class FS_Store : public Object_Store{
     private:
 
         std::string _path;
-        int _find_link(const R_Ref &id) const;
-        int _find_link(const W_Ref &id) const;
-        int _find_link(const D_Ref &id) const;
+        std::string _find_path(const R_Ref &id) const;
+        std::string _find_path(const W_Ref &id) const;
+        std::string _find_path(const D_Ref &id) const;
 
 };
 

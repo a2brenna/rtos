@@ -21,9 +21,35 @@ class Ref {
 
 };
 
-class R_Ref : public Ref {};
-class W_Ref : public Ref {};
-class D_Ref : public Ref {};
+class R_Ref : public Ref {
+
+    public:
+
+        R_Ref();
+        R_Ref(const std::string &id);
+        R_Ref(const char *buf, const size_t &len);
+
+};
+
+class W_Ref : public Ref {
+
+    public:
+
+        W_Ref();
+        W_Ref(const std::string &id);
+        W_Ref(const char *buf, const size_t &len);
+
+};
+
+class D_Ref : public Ref {
+
+    public:
+
+        D_Ref();
+        D_Ref(const std::string &id);
+        D_Ref(const char *buf, const size_t &len);
+
+};
 
 //bool operator<(const Ref &lhs, const Ref &rhs);
 
