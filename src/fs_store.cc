@@ -27,3 +27,7 @@ int FS_Store::_find_link(const W_Ref &id) const{
 int FS_Store::_find_link(const D_Ref &id) const{
     return -1;
 }
+
+void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id){
+    return;
+}

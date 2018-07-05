@@ -21,8 +21,8 @@ class Object_Store {
 
     public:
 
-		/*
         void create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id);
+		/*
         void remove(const D_Ref &rm_id);
 
         void append(const W_Ref &write_id, const R_Ref &read_id, const uint64_t &index, const Object &data);

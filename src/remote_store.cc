@@ -42,7 +42,7 @@ rtos::Response perform_request(const rtos::Request &request, std::shared_ptr<smp
     }
 
 }
-/*
+
 void Remote_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id){
     rtos::Request request;
 
@@ -53,4 +53,3 @@ void Remote_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_R
 
     perform_request(request, _server);
 }
-*/
