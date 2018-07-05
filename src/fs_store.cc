@@ -32,6 +32,7 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
 
     struct stat statbuf;
 
+    //TODO: shorten w/ for loop
     const std::string r_path = _find_path(read_id);
     const int r_stat = stat(r_path.c_str(), &statbuf);
     if(r_stat != -1 || errno != ENOENT){
@@ -50,6 +51,7 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
         throw E_OBJECT_EXISTS();
     }
 
+    //TODO: shorten w/ for loop
     //create_file
     const int new_fd = open(r_path.c_str(), O_CREAT | O_RDONLY, S_IRWXU);
     if(new_fd < 0){
