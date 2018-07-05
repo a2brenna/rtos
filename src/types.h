@@ -21,7 +21,11 @@ class Ref {
 
 };
 
-bool operator<(const Ref &lhs, const Ref &rhs);
+class R_Ref : public Ref {};
+class W_Ref : public Ref {};
+class D_Ref : public Ref {};
+
+//bool operator<(const Ref &lhs, const Ref &rhs);
 
 //TODO: Make a better type for this that supports a safe [] operator...?
 //TODO: Make this support some sort of T extract<T>(const size_t &index) that safely checks size and casting to ensure you don't overrun the end when extracting type T from bytestring at position index

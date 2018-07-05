@@ -31,7 +31,7 @@ ephemeral_store.o: src/ephemeral_store.h src/ephemeral_store.cc src/types.h
 fs_store.o: src/fs_store.h src/fs_store.cc src/types.h
 	${CXX} ${CXXFLAGS} -o fs_store.o -c src/fs_store.cc
 
-remote_store.o: src/remote_store.h src/remote_store.cc src/types.h
+remote_store.o: src/remote_store.h src/remote_store.cc src/types.h src/wire_protocol.pb.h
 	${CXX} ${CXXFLAGS} -o remote_store.o -c src/remote_store.cc
 
 encode.o: src/encode.h src/encode.cc
@@ -56,3 +56,5 @@ clean:
 	rm -f *.o
 	rm -f *.so
 	rm -f *.a
+	rm -f src/*.pb.h
+	rm -f src/*.pb.cc

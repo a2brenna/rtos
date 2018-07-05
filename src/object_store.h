@@ -21,16 +21,16 @@ class Object_Store {
 
     public:
 
-        /*
-        virtual void create(const Ref &read_id, const Ref &write_id, const Ref &rm_id) = 0;
-        virtual void remove(const Ref &rm_id) = 0;
+		/*
+        void create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &rm_id);
+        void remove(const D_Ref &rm_id);
 
-        virtual void append(const Ref &write_id, const Ref &read_id, const uint64_t &index, const Object &data) = 0;
-        virtual void append(const Ref &write_id, const Object &data) = 0;
-        virtual void mutate(const Ref &target_read_id, const Ref &target_write_id, const Ref &target_rm_id, const Ref &source_read_id, const int64_t &index, const Object &data) = 0;
+        void append(const W_Ref &write_id, const R_Ref &read_id, const uint64_t &index, const Object &data);
+        void append(const W_Ref &write_id, const Object &data);
+        void mutate(const R_Ref &target_read_id, const W_Ref &target_write_id, const D_Ref &target_rm_id, const R_Ref &source_read_id, const int64_t &index, const Object &data);
 
-        virtual Object read(const Ref &read_id, const int64_t &index, const size_t &num_bytes) const = 0;
-        virtual Stats stat(const Ref &read_id) = 0;
+        Object read(const R_Ref &read_id, const int64_t &index, const size_t &num_bytes) const;
+        Stats stat(const R_Ref &read_id);
         */
 
 };

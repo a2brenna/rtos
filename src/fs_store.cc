@@ -16,6 +16,14 @@ FS_Store::FS_Store(const std::string &path){
 FS_Store::~FS_Store(){
 }
 
-int FS_Store::_find_link(const enum REF_TYPE, const Ref &id) const{
+int FS_Store::_find_link(const R_Ref &id) const{
+    return -1;
+}
+
+int FS_Store::_find_link(const W_Ref &id) const{
+    return -1;
+}
+
+int FS_Store::_find_link(const D_Ref &id) const{
     return -1;
 }

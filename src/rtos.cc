@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
 
     if(create && !(del || append || mutate || read || stat)){
         try{
-            server().create(read_ref, write_ref, delete_ref);
+            //server().create(read_ref, write_ref, delete_ref);
         }
         catch(E_OBJECT_EXISTS e){
             std::cout << "Error: Object Exists" << std::endl;
