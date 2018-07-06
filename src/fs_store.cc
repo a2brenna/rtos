@@ -5,8 +5,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/xattr.h>
 
 #include "encode.h"
+
+#include <iostream>
 
 FS_Store::FS_Store(const std::string &path){
     _path = path;
@@ -57,6 +60,23 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
     if(new_fd < 0){
         throw E_UNKNOWN();
     }
+
+    const int r_xattr = fsetxattr(new_fd, "user.rtos.r_ref", read_id.base16().c_str(), 64, XATTR_CREATE);
+    if(r_xattr != 0){
+        std::cout << r_xattr << " " << errno << std::endl;
+        throw E_UNKNOWN();
+    }
+
+    const int w_xattr = fsetxattr(new_fd, "user.rtos.w_ref", write_id.base16().c_str(), 64, XATTR_CREATE);
+    if(w_xattr != 0){
+        throw E_UNKNOWN();
+    }
+
+    const int d_xattr = fsetxattr(new_fd, "user.rtos.d_ref", rm_id.base16().c_str(), 64, XATTR_CREATE);
+    if(d_xattr != 0){
+        throw E_UNKNOWN();
+    }
+
     close(new_fd);
 
     const int w_link = link(r_path.c_str(), w_path.c_str());
