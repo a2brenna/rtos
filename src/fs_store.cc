@@ -57,6 +57,7 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
     if(new_fd < 0){
         throw E_UNKNOWN();
     }
+    close(new_fd);
 
     const int w_link = link(r_path.c_str(), w_path.c_str());
     if(w_link != 0){
