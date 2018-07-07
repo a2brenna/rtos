@@ -186,7 +186,7 @@ void FS_Store::append(const W_Ref &write_id, const R_Ref &read_id, const uint64_
         throw E_DATA_DNE();
     }
 
-    const int fd = open(w_path.c_str(), O_APPEND);
+    const int fd = open(w_path.c_str(), O_APPEND | O_WRONLY);
     if(fd < 0){
         throw E_UNKNOWN();
     }
@@ -221,7 +221,7 @@ void FS_Store::append(const W_Ref &write_id, const Object &data){
         throw E_OBJECT_DNE();
     }
 
-    const int fd = open(w_path.c_str(), O_APPEND);
+    const int fd = open(w_path.c_str(), O_APPEND | O_WRONLY);
     if(fd < 0){
         if(errno == ENOENT){
             throw E_OBJECT_DNE();
