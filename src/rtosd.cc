@@ -26,11 +26,18 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
 
             try{
                 if(request.has_create()){
-                    const R_Ref read_id(request.create().read_id().c_str(), 32);
-                    const W_Ref write_id(request.create().write_id().c_str(), 32);
-                    const D_Ref rm_id(request.create().rm_id().c_str(), 32);
+                    const R_Ref read_id(request.create().read_id().c_str(), RAW);
+                    const W_Ref write_id(request.create().write_id().c_str(), RAW);
+                    const D_Ref rm_id(request.create().rm_id().c_str(), RAW);
 
                     backend->create(read_id, write_id, rm_id);
+
+                    response.set_result(rtos::Response::SUCCESS);
+                }
+                else if(request.has_rm()){
+                    const D_Ref rm_id(request.rm().rm_id().c_str(), RAW);
+
+                    backend->remove(rm_id);
 
                     response.set_result(rtos::Response::SUCCESS);
                 }

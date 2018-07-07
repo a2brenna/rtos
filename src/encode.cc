@@ -27,7 +27,7 @@ static const char* s_hextable[256] =
     "fc", "fd", "fe", "ff"
 };
 
-std::string base64_encode(const unsigned char s[], const size_t size) {
+std::string base64_encode(const char s[], const size_t size) {
   namespace bai = boost::archive::iterators;
 
   std::stringstream os;
@@ -45,7 +45,7 @@ std::string base64_encode(const unsigned char s[], const size_t size) {
 }
 
 std::string base64_encode(const std::string& s) {
-    return base64_encode((unsigned char *)s.c_str(), s.size());
+    return base64_encode(s.c_str(), s.size());
 }
 
 std::string base64_decode(const std::string& s) {
@@ -70,7 +70,7 @@ std::string base64_decode(const std::string& s) {
   return os.str();
 }
 
-std::string base16_encode(const unsigned char s[], const size_t size) {
+std::string base16_encode(const char s[], const size_t size) {
 	std::string output;
 
 	for(size_t i = 0; i < size; i++){
@@ -82,10 +82,30 @@ std::string base16_encode(const unsigned char s[], const size_t size) {
 }
 
 std::string base16_encode(const std::string &s) {
-	return base16_encode((const unsigned char *)s.c_str(), s.size());
+	return base16_encode(s.c_str(), s.size());
 }
 
 //TODO: make faster by using 16 char lookup table and bit shifting?
+std::string base16_decode(const char s[], const size_t size){
+    assert( (size % 2) == 0 );
+
+    std::string output;
+
+    for(size_t i = 0; i < (size - 1); i += 2){
+        //assert both characters in valid set 0-9,a-f
+        assert( (((unsigned char)s[i] >= 48) && ((unsigned char)s[i] <= 57)) || (((unsigned char)s[i] >= 97) && ((unsigned char)s[i] <= 102)) );
+        assert( (((unsigned char)s[i+1] >= 48) && ((unsigned char)s[i+1] <= 57)) || (((unsigned char)s[i+1] >= 97) && ((unsigned char)s[i+1] <= 102)) );
+
+        for(size_t j = 0; j < 256; j++){
+            if( (s_hextable[j][0] == s[i]) && (s_hextable[j][1] == s[i+1])){
+                output.append(1, (unsigned char)j);
+                break;
+            }
+        }
+    }
+    return output;
+}
+
 std::string base16_decode(const std::string &s) {
     assert( (s.size() % 2) == 0 );
 

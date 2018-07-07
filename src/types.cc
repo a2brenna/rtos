@@ -13,13 +13,21 @@ Ref::Ref(const std::string &id){
     crypto_hash_sha256(_id, (const unsigned char *)id.c_str(), id.size());
 }
 
-Ref::Ref(const char *buf, const size_t &len){
-    assert(len == 32);
-    memcpy(_id, buf, 32);
+Ref::Ref(const char *buf, const ENCODING &encoding){
+    if(encoding == RAW){
+        memcpy(_id, buf, 32);
+    }
+    else if(encoding == BASE_16){
+        const std::string bytes = base16_decode(buf, 64);
+        memcpy(_id, bytes.c_str(), 32);
+    }
+    else{
+        assert(false);
+    }
 }
 
 std::string Ref::base16() const{
-    return base16_encode(_id, 32);
+    return base16_encode((const char *)_id, 32);
 }
 
 const char* Ref::buf() const{
@@ -42,8 +50,8 @@ R_Ref::R_Ref(const std::string &name) :
 
 }
 
-R_Ref::R_Ref(const char *buf, const size_t &num_bytes) :
-    Ref(buf, num_bytes)
+R_Ref::R_Ref(const char *buf, const ENCODING &encoding) :
+    Ref(buf, encoding)
 {
 
 }
@@ -60,8 +68,8 @@ W_Ref::W_Ref(const std::string &name) :
 
 }
 
-W_Ref::W_Ref(const char *buf, const size_t &num_bytes) :
-    Ref(buf, num_bytes)
+W_Ref::W_Ref(const char *buf, const ENCODING &encoding) :
+    Ref(buf, encoding)
 {
 
 }
@@ -78,8 +86,8 @@ D_Ref::D_Ref(const std::string &name) :
 
 }
 
-D_Ref::D_Ref(const char *buf, const size_t &num_bytes) :
-    Ref(buf, num_bytes)
+D_Ref::D_Ref(const char *buf, const ENCODING &encoding) :
+    Ref(buf, encoding)
 {
 
 }

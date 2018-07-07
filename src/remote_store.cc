@@ -53,3 +53,12 @@ void Remote_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_R
 
     perform_request(request, _server);
 }
+
+void Remote_Store::remove(const D_Ref &rm_id){
+    rtos::Request request;
+
+    rtos::Delete *v = request.mutable_rm();
+    v->set_rm_id(rm_id.buf(), 32);
+
+    perform_request(request, _server);
+}

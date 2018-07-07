@@ -76,7 +76,13 @@ int main(int argc, char* argv[]){
         }
     }
     else if(del && !(create || append || mutate || read || stat)){
-
+        try{
+            server().remove(delete_ref);
+        }
+        catch(E_OBJECT_DNE e){
+            std::cout << "Error: Object Does Not Exist" << std::endl;
+            return -2;
+        }
     }
     else if(append && !(create || del || mutate || read || stat)){
 

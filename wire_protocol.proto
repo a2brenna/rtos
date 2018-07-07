@@ -4,16 +4,21 @@ package rtos;
 
 message Request {
     Create create = 1;
-    Append append = 2;
-    Mutate mutate = 3;
-    Read read = 4;
-    Stat stat = 5;
+    Delete rm = 2;
+    Append append = 3;
+    Mutate mutate = 4;
+    Read read = 5;
+    Stat stat = 6;
 }
 
 message Create {
     bytes read_id = 1;
     bytes write_id = 2;
     bytes rm_id = 3;
+}
+
+message Delete {
+    bytes rm_id = 1;
 }
 
 message Append {

@@ -3,13 +3,18 @@
 
 #include <string>
 
+enum ENCODING {
+    RAW,
+    BASE_16
+};
+
 class Ref {
 
     public:
 
         Ref();
         Ref(const std::string &id);
-        Ref(const char *buf, const size_t &len);
+        Ref(const char *buf, const ENCODING &encoding);
 
         std::string base16() const;
         const char* buf() const;
@@ -27,7 +32,7 @@ class R_Ref : public Ref {
 
         R_Ref();
         R_Ref(const std::string &id);
-        R_Ref(const char *buf, const size_t &len);
+        R_Ref(const char *buf, const ENCODING &encoding);
 
 };
 
@@ -37,7 +42,7 @@ class W_Ref : public Ref {
 
         W_Ref();
         W_Ref(const std::string &id);
-        W_Ref(const char *buf, const size_t &len);
+        W_Ref(const char *buf, const ENCODING &encoding);
 
 };
 
@@ -47,7 +52,7 @@ class D_Ref : public Ref {
 
         D_Ref();
         D_Ref(const std::string &id);
-        D_Ref(const char *buf, const size_t &len);
+        D_Ref(const char *buf, const ENCODING &encoding);
 
 };
 

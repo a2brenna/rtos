@@ -91,3 +91,61 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
 
     return;
 }
+
+void FS_Store::remove(const D_Ref &rm_id){
+
+    const std::string d_path = _find_path(rm_id);
+
+    //This is overkill for detecting if the file exists... but could be useful for online constistency checks
+    /*
+    struct stat statbuf;
+    const int d_stat = stat(d_path.c_str(), &statbuf);
+    if(r_stat == -1 || errno == ENOENT){
+        throw E_OBJECT_DNE();
+    }
+    */
+
+    char buff[65];
+
+    const ssize_t r_ref_size = getxattr(d_path.c_str(), "user.rtos.r_ref", buff, 65);
+    if(r_ref_size != 64){
+        if(r_ref_size == -1 && errno == ENOENT){
+            throw E_OBJECT_DNE();
+        }
+        else{
+            throw E_UNKNOWN();
+        }
+    }
+    const std::string r_path = _find_path(R_Ref(buff, BASE_16));
+    std::cerr << r_path << std::endl;
+
+    const ssize_t w_ref_size = getxattr(d_path.c_str(), "user.rtos.w_ref", buff, 65);
+    if(w_ref_size != 64){
+        if(w_ref_size == -1 && errno == ENOENT){
+            throw E_OBJECT_DNE();
+        }
+        else{
+            throw E_UNKNOWN();
+        }
+    }
+    const std::string w_path = _find_path(W_Ref(buff, BASE_16));
+    std::cerr << w_path << std::endl;
+
+    const int r_unlink = unlink(r_path.c_str());
+    if(r_unlink != 0){
+        throw E_UNKNOWN();
+    }
+
+    const int w_unlink = unlink(w_path.c_str());
+    if(w_unlink != 0){
+        throw E_UNKNOWN();
+    }
+
+    const int d_unlink = unlink(d_path.c_str());
+    if(d_unlink != 0){
+        throw E_UNKNOWN();
+    }
+
+    return;
+
+}
