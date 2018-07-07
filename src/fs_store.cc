@@ -77,6 +77,10 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
         throw E_UNKNOWN();
     }
 
+    const int synced = fsync(new_fd);
+    if(synced != 0){
+        throw E_UNKNOWN();
+    }
     close(new_fd);
 
     const int w_link = link(r_path.c_str(), w_path.c_str());
@@ -147,5 +151,102 @@ void FS_Store::remove(const D_Ref &rm_id){
     }
 
     return;
+}
 
+void FS_Store::append(const W_Ref &write_id, const R_Ref &read_id, const uint64_t &index, const Object &data){
+    const std::string w_path = _find_path(write_id);
+
+    char buff[65];
+    const ssize_t r_ref_size = getxattr(w_path.c_str(), "user.rtos.r_ref", buff, 65);
+    if(r_ref_size != 64){
+        if(r_ref_size == -1 && errno == ENOENT){
+            throw E_OBJECT_DNE();
+        }
+        else{
+            throw E_UNKNOWN();
+        }
+    }
+    const R_Ref serverside_read_id(buff, BASE_16);
+
+    if(serverside_read_id != read_id){
+        throw E_OBJECT_DNE();
+    }
+
+    struct stat statbuf;
+    const int w_stat = stat(w_path.c_str(), &statbuf);
+    if(w_stat == -1 || errno == ENOENT){
+        throw E_OBJECT_DNE();
+    }
+
+    if(statbuf.st_size > index){
+        throw E_DATA_EXISTS();
+    }
+
+    if(statbuf.st_size < index){
+        throw E_DATA_DNE();
+    }
+
+    const int fd = open(w_path.c_str(), O_APPEND);
+    if(fd < 0){
+        throw E_UNKNOWN();
+    }
+
+    const ssize_t written = write(fd, data.bytes(), data.size());
+
+    if(written != data.size()){
+        const int did_truncate = ftruncate(fd, statbuf.st_size);
+        if(did_truncate != 0){
+            //horrible unrecoverable error?
+        }
+
+        throw E_UNKNOWN();
+    }
+
+    const int synced = fsync(fd);
+    if(synced != 0){
+        throw E_UNKNOWN();
+    }
+
+    close(fd);
+    return;
+}
+
+void FS_Store::append(const W_Ref &write_id, const Object &data){
+
+    const std::string w_path = _find_path(write_id);
+
+    struct stat statbuf;
+    const int w_stat = stat(w_path.c_str(), &statbuf);
+    if(w_stat == -1 || errno == ENOENT){
+        throw E_OBJECT_DNE();
+    }
+
+    const int fd = open(w_path.c_str(), O_APPEND);
+    if(fd < 0){
+        if(errno == ENOENT){
+            throw E_OBJECT_DNE();
+        }
+        else{
+            throw E_UNKNOWN();
+        }
+    }
+
+    const ssize_t written = write(fd, data.bytes(), data.size());
+
+    if(written != data.size()){
+        const int did_truncate = ftruncate(fd, statbuf.st_size);
+        if(did_truncate != 0){
+            //horrible unrecoverable error?
+        }
+
+        throw E_UNKNOWN();
+    }
+
+    const int synced = fsync(fd);
+    if(synced != 0){
+        throw E_UNKNOWN();
+    }
+
+    close(fd);
+    return;
 }

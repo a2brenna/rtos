@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
         }
     }
     else if(append && !(create || del || mutate || read || stat)){
-
+        server().append(write_ref, read_ref, index, bytes);
     }
     else if(mutate && !(create || del || append || read || stat)){
 

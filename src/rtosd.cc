@@ -41,6 +41,22 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
 
                     response.set_result(rtos::Response::SUCCESS);
                 }
+                else if(request.has_append()){
+                    const W_Ref write_id(request.append().write_id().c_str(), RAW);
+                    const Object o(request.append().data());
+
+                    if(request.append().read_id().size() == 32){
+                        const R_Ref read_id(request.append().read_id().c_str(), RAW);
+                        const uint64_t index = request.append().index();
+
+                        backend->append(write_id, read_id, index, o);
+                    }
+                    else{
+                        backend->append(write_id, o);
+                    }
+
+                    response.set_result(rtos::Response::SUCCESS);
+                }
                 else{
                     response.set_result(rtos::Response::E_UNKNOWN);
                 }

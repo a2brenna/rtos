@@ -38,6 +38,10 @@ bool operator<(const Ref &lhs, const Ref &rhs){
     return ( strncmp(lhs.buf(), rhs.buf(), 32) <  0 );
 }
 
+bool operator!=(const Ref &lhs, const Ref &rhs){
+    return ( strncmp(lhs.buf(), rhs.buf(), 32) !=  0 );
+}
+
 R_Ref::R_Ref() :
     Ref()
 {
@@ -105,6 +109,14 @@ void Object::append(const Object &data){
 
 std::string Object::data() const{
     return _data;
+}
+
+const char* Object::bytes() const{
+    return _data.c_str();
+}
+
+size_t Object::size() const{
+    return _data.size();
 }
 
 bool operator==(const Object &lhs, const Object &rhs){

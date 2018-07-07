@@ -71,6 +71,9 @@ class Object {
 
         std::string data() const;
 
+        const char* bytes() const;
+        size_t size() const;
+
     private:
 
         std::string _data;
@@ -78,5 +81,7 @@ class Object {
 };
 
 bool operator==(const Object &lfs, const Object &rhs);
+
+bool operator!=(const Ref &lfs, const Ref &rhs);
 
 #endif

@@ -52,6 +52,7 @@ void Remote_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_R
     v->set_rm_id(rm_id.buf(), 32);
 
     perform_request(request, _server);
+    return;
 }
 
 void Remote_Store::remove(const D_Ref &rm_id){
@@ -61,4 +62,29 @@ void Remote_Store::remove(const D_Ref &rm_id){
     v->set_rm_id(rm_id.buf(), 32);
 
     perform_request(request, _server);
+    return;
+}
+
+void Remote_Store::append(const W_Ref &write_id, const R_Ref &read_id, const uint64_t &index, const Object &data){
+    rtos::Request request;
+
+    rtos::Append *v = request.mutable_append();
+    v->set_write_id(write_id.buf(), 32);
+    v->set_read_id(read_id.buf(), 32);
+    v->set_index(index);
+    v->set_data(data.bytes(), data.size());
+
+    perform_request(request, _server);
+    return;
+}
+
+void Remote_Store::append(const W_Ref &write_id, const Object &data){
+    rtos::Request request;
+
+    rtos::Append *v = request.mutable_append();
+    v->set_write_id(write_id.buf(), 32);
+    v->set_data(data.bytes(), data.size());
+
+    perform_request(request, _server);
+    return;
 }
