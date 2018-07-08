@@ -7,6 +7,7 @@
 #include "wire_protocol.pb.h"
 #include "remote_store.h"
 #include "encode.h"
+#include "address_parse.h"
 
 namespace po = boost::program_options;
 
@@ -63,7 +64,14 @@ int main(int argc, char* argv[]){
     po::notify(vm);
 
     const std::function<Remote_Store()> server = [address](){
-        return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(address)));
+        try{
+            const auto ip_port = parse_network_address(address);
+            return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_Port(ip_port.first, ip_port.second)));
+        }
+        catch(E_BAD_ADDRESS e){
+            std::cout << "Bad address" << std::endl;
+            return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(address)));
+        }
     };
 
     if(create && !(del || append || mutate || read || stat)){

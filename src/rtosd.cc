@@ -11,6 +11,7 @@
 #include <smpl.h>
 #include <smplsocket.h>
 
+#include "address_parse.h"
 #include "wire_protocol.pb.h"
 
 namespace po = boost::program_options;
@@ -140,6 +141,7 @@ int main(int argc, char* argv[]){
     backend = std::shared_ptr<Object_Store>(new FS_Store(DIRECTORY));
 
     if(vm.count("unix_domain_socket") > 0){
+        std::cerr << "Opening uds" << std::endl;
         struct stat statbuf;
         const int r_stat = stat(UNIX_DOMAIN_SOCKET.c_str(), &statbuf);
         if(r_stat == 0){
@@ -154,18 +156,9 @@ int main(int argc, char* argv[]){
     }
 
     if(vm.count("network_socket") > 0){
+        std::cerr << "Opening network" << std::endl;
 
-        const std::pair<std::string, int> address = [](const std::string &arg){
-            size_t i = 0;
-            for( ; i < arg.size() && arg[i] != ':'; i++);
-            assert( i != arg.size() );
-
-            const std::string ip(arg.c_str(), i);
-            const int port = atoi(arg.c_str() + i + 1);
-
-            return std::pair<std::string, int>(ip, port);
-        }(NETWORK_SOCKET);
-
+        const std::pair<std::string, int> address = parse_network_address(NETWORK_SOCKET);
         std::shared_ptr<smpl::Local_Address> network_socket(new smpl::Local_Port(address.first, address.second));
         auto network_handler = std::thread(std::bind(handle_local_address, network_socket));
         network_handler.detach();
