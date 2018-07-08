@@ -96,7 +96,6 @@ Object Remote_Store::read(const R_Ref &read_id, const int64_t &index, const size
 
     rtos::Read *v = request.mutable_read();
     v->set_read_id(read_id.buf(), 32);
-    std::cout << "Index: " << index << std::endl;
     v->set_index(index);
     v->set_num_bytes(num_bytes);
 

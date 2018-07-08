@@ -64,7 +64,6 @@ void handle_channel(std::shared_ptr<smpl::Channel> client){
                 else if(request.has_read()){
                     const R_Ref read_id(request.read().read_id().c_str(), RAW);
                     const int64_t index = request.read().index();
-                    std::cout << "Index: " << index << std::endl;
                     const uint64_t num_bytes = request.read().num_bytes();
 
                     const Object o = backend->read(read_id, index, num_bytes);
