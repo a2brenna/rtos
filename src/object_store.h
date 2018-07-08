@@ -26,9 +26,9 @@ class Object_Store {
 
         virtual void append(const W_Ref &write_id, const R_Ref &read_id, const uint64_t &index, const Object &data) = 0;
         virtual void append(const W_Ref &write_id, const Object &data) = 0;
-		/*
 
-        Object read(const R_Ref &read_id, const int64_t &index, const size_t &num_bytes) const;
+        virtual Object read(const R_Ref &read_id, const int64_t &index, const size_t &num_bytes) const = 0;
+		/*
         void mutate(const R_Ref &target_read_id, const W_Ref &target_write_id, const D_Ref &target_rm_id, const R_Ref &source_read_id, const int64_t &index, const Object &data);
         Stats stat(const R_Ref &read_id);
         */

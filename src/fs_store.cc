@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sys/xattr.h>
 
+#include <memory>
+
 #include "encode.h"
 
 #include <iostream>
@@ -63,7 +65,6 @@ void FS_Store::create(const R_Ref &read_id, const W_Ref &write_id, const D_Ref &
 
     const int r_xattr = fsetxattr(new_fd, "user.rtos.r_ref", read_id.base16().c_str(), 64, XATTR_CREATE);
     if(r_xattr != 0){
-        std::cout << r_xattr << " " << errno << std::endl;
         throw E_UNKNOWN();
     }
 
@@ -121,7 +122,6 @@ void FS_Store::remove(const D_Ref &rm_id){
         }
     }
     const std::string r_path = _find_path(R_Ref(buff, BASE_16));
-    std::cerr << r_path << std::endl;
 
     const ssize_t w_ref_size = getxattr(d_path.c_str(), "user.rtos.w_ref", buff, 65);
     if(w_ref_size != 64){
@@ -133,7 +133,6 @@ void FS_Store::remove(const D_Ref &rm_id){
         }
     }
     const std::string w_path = _find_path(W_Ref(buff, BASE_16));
-    std::cerr << w_path << std::endl;
 
     const int r_unlink = unlink(r_path.c_str());
     if(r_unlink != 0){
@@ -249,4 +248,48 @@ void FS_Store::append(const W_Ref &write_id, const Object &data){
 
     close(fd);
     return;
+}
+
+Object FS_Store::read(const R_Ref &read_id, const int64_t &index, const size_t &num_bytes) const{
+
+    const std::string r_path = _find_path(read_id);
+
+    struct stat statbuf;
+    const int r_stat = stat(r_path.c_str(), &statbuf);
+    if(r_stat == -1 || errno == ENOENT){
+        throw E_OBJECT_DNE();
+    }
+
+    const auto object_size = statbuf.st_size;
+
+
+    if(std::abs(index) >= object_size){
+        throw E_DATA_DNE();
+    }
+
+    const uint64_t real_index = index % object_size;
+
+    if(real_index + num_bytes > object_size){
+        throw E_DATA_DNE();
+    }
+
+    const int fd = open(r_path.c_str(), O_CREAT | O_RDONLY, S_IRWXU);
+    if(fd < 0){
+        throw E_UNKNOWN();
+    }
+
+    const off_t r_seek = lseek(fd, real_index, SEEK_SET);
+    if(r_seek != real_index){
+        throw E_UNKNOWN();
+    }
+
+    std::unique_ptr<char> read_buf((char *) malloc(num_bytes));
+    assert(read_buf);
+
+    const ssize_t r_read = ::read(fd, read_buf.get(), num_bytes);
+    if(r_read != num_bytes){
+        throw E_UNKNOWN();
+    }
+
+    return Object(std::string(read_buf.get(), num_bytes));
 }

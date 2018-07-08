@@ -7,6 +7,8 @@
 #include "wire_protocol.pb.h"
 #include "encode.h"
 
+#include <iostream>
+
 Remote_Store::Remote_Store(std::shared_ptr<smpl::Remote_Address> server_address){
     _server_address = server_address;
     _server = std::shared_ptr<smpl::Channel>(server_address->connect());
@@ -87,4 +89,18 @@ void Remote_Store::append(const W_Ref &write_id, const Object &data){
 
     perform_request(request, _server);
     return;
+}
+
+Object Remote_Store::read(const R_Ref &read_id, const int64_t &index, const size_t &num_bytes) const{
+    rtos::Request request;
+
+    rtos::Read *v = request.mutable_read();
+    v->set_read_id(read_id.buf(), 32);
+    std::cout << "Index: " << index << std::endl;
+    v->set_index(index);
+    v->set_num_bytes(num_bytes);
+
+    const rtos::Response response = perform_request(request, _server);
+    const Object o(response.data());
+    return o;
 }

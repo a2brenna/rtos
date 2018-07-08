@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
     bool hash_ids = false;
 
     std::string bytes;
-    int64_t index;
+    int64_t index = 0;
     size_t num_bytes;
 
     std::string address;
@@ -85,13 +85,27 @@ int main(int argc, char* argv[]){
         }
     }
     else if(append && !(create || del || mutate || read || stat)){
-        server().append(write_ref, read_ref, index, bytes);
+        if(vm.count("read_ref") == 1 && vm.count("index") == 1){
+            server().append(write_ref, read_ref, index, Object(bytes));
+        }
+        else if(vm.count("read_ref") == 0 && vm.count("index") == 0){
+            server().append(write_ref, Object(bytes));
+        }
+        else{
+            assert(false);
+        }
     }
     else if(mutate && !(create || del || append || read || stat)){
 
     }
     else if(read && !(create || del || append || mutate || stat)){
-
+        if(vm.count("read_ref") == 1 && vm.count("index") == 1 && vm.count("num_bytes") == 1){
+            const Object result = server().read(read_ref, index, num_bytes);
+            std::cout << result.data() << std::endl;
+        }
+        else{
+            assert(false);
+        }
     }
     else if(stat && !(create || del || append || mutate || read)){
 
