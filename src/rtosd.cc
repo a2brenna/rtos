@@ -2,9 +2,12 @@
 #include <string>
 #include <boost/program_options.hpp>
 #include "fs_store.h"
+#include "timer.h"
 #include <cassert>
 #include <memory>
 #include <thread>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <smpl.h>
 #include <smplsocket.h>
 
@@ -107,15 +110,18 @@ int main(int argc, char* argv[]){
 
     std::string DIRECTORY;
     std::string UNIX_DOMAIN_SOCKET;
+    std::string NETWORK_SOCKET;
 
 	po::options_description desc("Options");
 	desc.add_options()
-        ("directory", po::value<std::string>(&DIRECTORY), "Backend storage directory")
-        ("uds", po::value<std::string>(&UNIX_DOMAIN_SOCKET), "Unix Domain Socket to listen on")
+        ("directory,d", po::value<std::string>(&DIRECTORY), "Backend storage directory")
+        ("unix_domain_socket,u", po::value<std::string>(&UNIX_DOMAIN_SOCKET), "Unix Domain Socket to listen on")
+        ("network_socket,n", po::value<std::string>(&NETWORK_SOCKET), "Network Socket to listen on")
     ;
 
+    po::variables_map vm;
+
     try{
-        po::variables_map vm;
         po::store(po::parse_command_line(argc, argv, desc), vm);
         po::notify(vm);
     }
@@ -133,9 +139,37 @@ int main(int argc, char* argv[]){
 
     backend = std::shared_ptr<Object_Store>(new FS_Store(DIRECTORY));
 
-    std::shared_ptr<smpl::Local_Address> unix_domain_socket(new smpl::Local_UDS(UNIX_DOMAIN_SOCKET));
-    auto unix_domain_handler = std::thread(std::bind(handle_local_address, unix_domain_socket));
-    unix_domain_handler.detach();
+    if(vm.count("unix_domain_socket") > 0){
+        struct stat statbuf;
+        const int r_stat = stat(UNIX_DOMAIN_SOCKET.c_str(), &statbuf);
+        if(r_stat == 0){
+            if(statbuf.st_size == 0){
+                unlink(UNIX_DOMAIN_SOCKET.c_str());
+            }
+        }
+
+        std::shared_ptr<smpl::Local_Address> unix_domain_socket(new smpl::Local_UDS(UNIX_DOMAIN_SOCKET));
+        auto unix_domain_handler = std::thread(std::bind(handle_local_address, unix_domain_socket));
+        unix_domain_handler.detach();
+    }
+
+    if(vm.count("network_socket") > 0){
+
+        const std::pair<std::string, int> address = [](const std::string &arg){
+            size_t i = 0;
+            for( ; i < arg.size() && arg[i] != ':'; i++);
+            assert( i != arg.size() );
+
+            const std::string ip(arg.c_str(), i);
+            const int port = atoi(arg.c_str() + i + 1);
+
+            return std::pair<std::string, int>(ip, port);
+        }(NETWORK_SOCKET);
+
+        std::shared_ptr<smpl::Local_Address> network_socket(new smpl::Local_Port(address.first, address.second));
+        auto network_handler = std::thread(std::bind(handle_local_address, network_socket));
+        network_handler.detach();
+    }
 
 	while(true){
 		std::this_thread::sleep_for(std::chrono::seconds(3600));
