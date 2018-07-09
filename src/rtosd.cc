@@ -140,7 +140,6 @@ int main(int argc, char* argv[]){
     backend = std::shared_ptr<Object_Store>(new FS_Store(DIRECTORY));
 
     if(vm.count("unix_domain_socket") > 0){
-        std::cerr << "Opening uds" << std::endl;
         struct stat statbuf;
         const int r_stat = stat(UNIX_DOMAIN_SOCKET.c_str(), &statbuf);
         if(r_stat == 0){
@@ -155,8 +154,6 @@ int main(int argc, char* argv[]){
     }
 
     if(vm.count("network_socket") > 0){
-        std::cerr << "Opening network" << std::endl;
-
         const std::pair<std::string, int> address = parse_network_address(NETWORK_SOCKET);
         std::shared_ptr<smpl::Local_Address> network_socket(new smpl::Local_Port(address.first, address.second));
         auto network_handler = std::thread(std::bind(handle_local_address, network_socket));
