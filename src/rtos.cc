@@ -69,28 +69,15 @@ int main(int argc, char* argv[]){
             return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_Port(ip_port.first, ip_port.second)));
         }
         catch(E_BAD_ADDRESS e){
-            std::cout << "Bad address" << std::endl;
             return Remote_Store(std::shared_ptr<smpl::Remote_Address>(new smpl::Remote_UDS(address)));
         }
     };
 
     if(create && !(del || append || mutate || read || stat)){
-        try{
-            server().create(read_ref, write_ref, delete_ref);
-        }
-        catch(E_OBJECT_EXISTS e){
-            std::cout << "Error: Object Exists" << std::endl;
-            return -2;
-        }
+        server().create(read_ref, write_ref, delete_ref);
     }
     else if(del && !(create || append || mutate || read || stat)){
-        try{
-            server().remove(delete_ref);
-        }
-        catch(E_OBJECT_DNE e){
-            std::cout << "Error: Object Does Not Exist" << std::endl;
-            return -2;
-        }
+        server().remove(delete_ref);
     }
     else if(append && !(create || del || mutate || read || stat)){
         if(vm.count("read_ref") == 1 && vm.count("index") == 1){
