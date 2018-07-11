@@ -2,7 +2,6 @@
 #include <string>
 #include <boost/program_options.hpp>
 #include "fs_store.h"
-#include "timer.h"
 #include <cassert>
 #include <memory>
 #include <thread>
